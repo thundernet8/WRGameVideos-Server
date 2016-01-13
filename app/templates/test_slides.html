@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block header %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/zepto.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/sea.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="pageView">
+    <!-- Slides -->
+    <div id="home-slider">
+        {% import 'macros/_slide.html' as slide_macro %}
+        <div id="scroller" class="clearfix" style="width: 10000px;">
+            {% for slide in slides %}
+                {{ slide_macro.render_slide(slide) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Slides end -->
+
+</div>
+<script type="text/javascript">
+seajs.config({
+    // base: "/static/m/hd/v3/client/dist/scripts",
+    base: "{{ url_for('static', filename='js', _external=True) }}",
+    map: [
+        [ /^(.*\.js)(.*)$/i, '$1?v=16011303']
+    ]
+});
+seajs.use('main');
+</script>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

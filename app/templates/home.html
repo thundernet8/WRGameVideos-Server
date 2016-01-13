@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block header %}
+{{ super() }}
+
+{% endblock %}
+
+{% block body %}
+<div class="pageView">
+    <!-- Slides -->
+    <div id="home-slider">
+        {% import 'macros/_slide.html' as slide_macro %}
+        <div id="scroller" class="clearfix" style="width: 10000px;">
+            {% for slide in slides %}
+                {{ slide_macro.render_slide(slide) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Slides end -->
+
+    {% import 'macros/_catvideo.html' as catvideo_macro %}
+    {% import '_cattopic.html' as cattopic_macro %}
+    <!-- Categories LOL -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title lol">英雄联盟</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in lol_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cate-list special-list" style="display:none;">
+        <div class="scroller clearfix" style="width: 10000px;">
+            {% for topic in lol_topics %}
+                {{ cattopic_macro.render_cattopic(topic) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Categories LOL end -->
+
+    <!-- Categories DOTA -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">Dota/Dota2</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in dota_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cate-list special-list" style="display:none;">
+        <div class="scroller clearfix" style="width: 10000px;">
+            {% for topic in dota_topics %}
+                {{ cattopic_macro.render_cattopic(topic) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Categories DOTA end -->
+
+    <!-- Categories Storm Heroes -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title sh">风暴英雄</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in sh_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Categories Storm Heroes end -->
+
+    <!-- Categories Hearth Stone -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">炉石传说</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in hs_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Categories Hearth Stone end -->
+
+    <!-- Categories Minecraft -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">我的世界</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in mc_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cate-list special-list" style="display:none;">
+        <div class="scroller clearfix" style="width: 10000px;">
+            {% for topic in mc_topics %}
+                {{ cattopic_macro.render_cattopic(topic) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Categories Minecraft end -->
+
+    <!-- Categories D3 -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">暗黑破坏神</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in d3_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Categories D3 end -->
+
+    <!-- Categories WOW -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">魔兽世界</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in wow_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cate-list special-list" style="display:none;">
+        <div class="scroller clearfix" style="width: 10000px;">
+            {% for topic in wow_topics %}
+                {{ cattopic_macro.render_cattopic(topic) }}
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Categories WOW end -->
+
+    <!-- Categories CF -->
+    <div class="cate-list" style="display: none;">
+        <div class="cate-head channel-list" data-target="900000189" data-filter="">
+            <div class="cate-title dota">穿越火线</div>
+            <a data-ismore="1" data-filter="" href="javascript:void(0);" class="more">更多</a>
+        </div>
+        <div class="video-list-home">
+            <div class="scroll-wrapper">
+                <div class="scroller clearfix">
+                    {% for video in cf_videos %}
+                        {{ catvideo_macro.render_video(video) }}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Categories CF end -->
+
+
+</div>
+{% endblock %}
+
+{% block footer %}}
+
+{% endblock %}

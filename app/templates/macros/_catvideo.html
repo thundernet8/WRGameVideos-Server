@@ -1,0 +1,8 @@
+{% macro render_catvideo(video) %}
+<a href="javascript:void(0);" class="video-item" data-video-id="{{ video.video_ID }}" data-name="{{ video.video_title }}" data-score="{{ '%.1f' % video.video_score }}" data-cover="{{ video.video_cover }}" data-runtime="{{ video.video_duration }}" data-year="">
+    <img class="lazy-pic" data-pic="{{ video.video_cover }}" src="{{ url_for('static', filename='images/holder.png') }}">
+    <div class="title">{{ video.video_title }}</div>
+    <div class="info">{{ video.video_description }}</div>
+    <div class="score">{{ '%.1f' % video.video_score }}分</div>
+</a>
+{% endmacro %}

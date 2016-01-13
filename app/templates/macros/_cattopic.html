@@ -1,0 +1,5 @@
+{% macro render_cattopic(topic) %}
+<a data-id="217" data-name="{{ topic.name }}">
+    <img class="lazy-pic" data-pic="{{ topic.thumb }}" src="{{ url_for('static', filename='images/holder.png') }}">
+</a>
+{% endmacro %}

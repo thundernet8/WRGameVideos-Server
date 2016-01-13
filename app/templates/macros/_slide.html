@@ -1,0 +1,8 @@
+{% macro render_slide(slide) %}
+{% if slide.get('is_ad') %}
+
+<a class="slide ad" style="background-image: url({{ slide.get('image') }})" href="{{ slide.get('link') }}" data-name="{{ slide.get('title') }}"></a>
+{% else %}
+<a class="slide" style="background-image: url({{ slide.get('image') }})" data-id="{{ slide.get('video_id') }}" data-name="{{ slide.get('title') }}"></a>
+{% endif %}
+{% endmacro %}
