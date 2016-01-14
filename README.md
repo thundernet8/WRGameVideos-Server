@@ -1,2 +1,2 @@
 # WRGameVideos-Server
-WRGameVideos Presentation Layer
+WRGameVideos Web Client

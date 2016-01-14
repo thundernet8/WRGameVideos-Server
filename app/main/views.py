@@ -57,4 +57,9 @@ def index():
     url = (current_app.config['API_SERVER_API_URL'] or 'http://api.parser.cc/api/v1.0/')+'slides'
     response = request_api_url(url).read()
     slides = json.loads(response).get('slides')
-    return render_template('test_slides.html', slides=slides)
+
+    lol_cate_url = (current_app.config['API_SERVER_API_URL'] or 'http://api.parser.cc/api/v1.0/')+'videos/cate/2'
+    lol_cate_response = request_api_url(lol_cate_url).read()
+    lol_videos = json.loads(lol_cate_response).get('videos')
+
+    return render_template('home.html', current_app=current_app, slides=slides, lol_videos=lol_videos)

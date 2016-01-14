@@ -19,7 +19,7 @@
     <!-- Slides end -->
 
     {% import 'macros/_catvideo.html' as catvideo_macro %}
-    {% import '_cattopic.html' as cattopic_macro %}
+    {% import 'macros/_cattopic.html' as cattopic_macro %}
     <!-- Categories LOL -->
     <div class="cate-list" style="display: none;">
         <div class="cate-head channel-list" data-target="900000189" data-filter="">
@@ -30,7 +30,7 @@
             <div class="scroll-wrapper">
                 <div class="scroller clearfix">
                     {% for video in lol_videos %}
-                        {{ catvideo_macro.render_video(video) }}
+                        {{ catvideo_macro.render_catvideo(video) }}
                     {% endfor %}
                 </div>
             </div>
@@ -194,8 +194,64 @@
 
 
 </div>
+
+<script type="text/javascript">
+    d = new Date();
+    v = (d.getYear()-100).toString()+ (d.getMonth()+101).toString().substr(1,2)+ d.getDate().toString();
+    seajs.config({
+        base: "{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/scripts', _external=True) }}",
+        map: [
+            [ /^(.*\.js)(.*)$/i, '$1?v='+v]
+        ]
+    });
+    seajs.use('pages/index');
+</script>
+<script>
+    var hostname = location.hostname,
+        isLocal = hostname=='10.88.0.111' || hostname == '10.88.0.110',
+        isDev = hostname.indexOf('dev')!==-1,
+        uID = getCookie('xy_d_id');
+
+    //获取cookie
+    function getCookie(name){
+
+        var strCookie=document.cookie;
+
+        var arrCookie=strCookie.split("; ");
+
+        for(var i=0;i<arrCookie.length;i++){
+
+            var arr=arrCookie[i].split("=");
+
+            if(arr[0]==name)return arr[1];
+
+        }
+
+        return "";
+    }
+
+    (function(i,s,o,g,r,a,m){
+        i['GoogleAnalyticsObject']=r;
+        i[r]=i[r]||function(){
+            if (!isLocal && !isDev){
+                (i[r].q=i[r].q||[]).push(arguments);
+            }else{
+
+            }
+        },
+        i[r].l=1*new Date();
+        a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];
+        a.async=1;
+        a.src=g;
+        m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.jss','ga');
+
+    //ga('create', 'UA-59775256-1', { 'userId': uID });
+
+</script>
 {% endblock %}
 
-{% block footer %}}
+{% block footer %}
 
 {% endblock %}

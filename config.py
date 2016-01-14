@@ -26,6 +26,8 @@ class Config:
     API_SERVER_OPEN_URL = 'http://api.parser.cc/open/v1.0/'
     API_SERVER_API_URL = 'http://api.parser.cc/api/v1.0/'
 
+    STATIC_DIR_PREFIX = 'dist'
+
     @staticmethod
     def init_app(app):
         pass
@@ -33,6 +35,7 @@ class Config:
 
 class DevConfig(Config):
     DEBUG = True
+    STATIC_DIR_PREFIX = 'src'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app/data/gv-dev.db')
 
 
