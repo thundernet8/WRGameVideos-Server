@@ -1,4 +1,4 @@
-## WRGameVideos-Server
+## WRGameVideos-Web Clent
 
 ** 因考虑到视频版权原因和 App Store 的审核问题，项目放弃 **
 
