@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block header %}
+{{ super() }}
+{% block title %}<title>频道列表 - 高清游戏视频</title>{% endblock %}
+{% block css %}<link href="{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/styles/page-channellist.css') }}" rel="stylesheet" type="text/css"/>{% endblock %}
+{% endblock %}
+
+{% block body %}
+<div class="pageView categoryView" data-moreid="" data-filter="">
+    {% import 'macros/_subchannel.html' as macro %}
+    {% for subchannel in subchannels %}
+        {{ macro.render_subchannel(subchannel) }}
+    {% endfor %}
+</div>
+<script type="text/javascript">
+    d = new Date();
+    v = (d.getYear()-100).toString()+ (d.getMonth()+101).toString().substr(1,2)+ d.getDate().toString();
+    seajs.config({
+        base: "{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/scripts', _external=True) }}",
+        map: [
+            [ /^(.*\.js)(.*)$/i, '$1?v='+v]
+        ]
+    });
+    seajs.use('pages/channellist');
+</script>
+<script>
+    var hostname = location.hostname,
+    isLocal = hostname=='192.168.2.104' || hostname == '127.0.0.1',
+    isDev = hostname.indexOf('dev')!==-1,
+    uID = getCookie('xy_d_id');
+
+//获取cookie
+function getCookie(name){
+
+    var strCookie=document.cookie;
+
+    var arrCookie=strCookie.split("; ");
+
+    for(var i=0;i<arrCookie.length;i++){
+
+        var arr=arrCookie[i].split("=");
+
+        if(arr[0]==name)return arr[1];
+
+    }
+
+    return "";
+}
+</script>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

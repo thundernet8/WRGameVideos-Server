@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block header %}
+{{ super() }}
+{% block title %}<title>频道首页 - 高清游戏视频</title>{% endblock %}
+{% block css %}<link href="{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/styles/page-channelindex.css') }}" rel="stylesheet" type="text/css"/>{% endblock %}
+{% endblock %}
+
+{% block body %}
+<div class="pageView categoryView">
+    <div class="head-cate-list">
+        <ul class="clearfix">
+            {% for taxonomy in taxonomies %}
+            <li>
+                <a data-target="{{ taxonomy.taxonomy_id }}" href="javascript:;" class="head-cate-item parent-cate" style="background-image:url({{ taxonomy.cover }}); border-radius: 5px;">
+                {{ taxonomy.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="cate-list clearfix" style="display: none">
+        <ul>
+            <li><a href="javascript:void(0);" class="cate-item rank-cate top" data-target="0" data-subid="rank" data-filter="">排行榜</a></li>
+            <li><a href="javascript:void(0);" class="cate-item hollywood" data-target="1010" data-subid="10210101" data-filter="area:美国">好莱坞影院</a></li>
+            <li><a href="javascript:void(0);" class="cate-item neidi" data-target="1010" data-subid="10210102" data-filter="area:大陆">国内院线</a></li>
+            <li><a href="javascript:void(0);" class="cate-item guochan" data-target="1011" data-subid="10210201" data-filter="area:大陆">内地剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item meiju" data-target="1011" data-subid="10210204" data-filter="area:美国">美剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item yingju" data-target="1011" data-subid="10210202" data-filter="area:英国">英剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item rihan" data-target="1011" data-subid="10210203" data-filter="area:韩国">韩剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item riju" data-target="1011" data-subid="10210205" data-filter="area:日本">日剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item gangju" data-target="1011" data-subid="10210206" data-filter="area:香港">港剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item taiwanju" data-target="1011" data-subid="10210207" data-filter="area:台湾">台剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item taiguoju" data-target="1011" data-subid="10210208" data-filter="area:泰国">泰剧</a></li>
+            <li><a href="javascript:void(0);" class="cate-item shaoer" data-target="1015" data-subid="1015" data-filter="">动画片</a></li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    d = new Date();
+    v = (d.getYear()-100).toString()+ (d.getMonth()+101).toString().substr(1,2)+ d.getDate().toString();
+    seajs.config({
+        base: "{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/scripts', _external=True) }}",
+        map: [
+            [ /^(.*\.js)(.*)$/i, '$1?v='+v]
+        ]
+    });
+    seajs.use('pages/channelindex');
+</script>
+<script>
+    var hostname = location.hostname,
+    isLocal = hostname=='192.168.2.101' || hostname == '127.0.0.1',
+    isDev = hostname.indexOf('dev')!==-1,
+    uID = getCookie('xy_d_id');
+
+//获取cookie
+function getCookie(name){
+
+    var strCookie=document.cookie;
+
+    var arrCookie=strCookie.split("; ");
+
+    for(var i=0;i<arrCookie.length;i++){
+
+        var arr=arrCookie[i].split("=");
+
+        if(arr[0]==name)return arr[1];
+
+    }
+
+    return "";
+}
+
+</script>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

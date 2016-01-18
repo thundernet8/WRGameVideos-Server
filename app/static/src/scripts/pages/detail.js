@@ -1,2 +1,1233 @@
-define("pages/detail",["../config","../utils/jsToOC","../utils/getUrlParam","../utils/openPage","../plugins/cookie","../templates/detail","../templates/template","../templates/zyList","../utils/localStorage","../views/loading","../plugins/spin","../templates/recommendVideo","../templates/videoSeries","../utils/global","../utils/pageBannerSet","../utils/supportedApps","../plugins/sweetalert"],function(a){function b(a){var b=a.hash||"",c=a.play?a.play.file_size:"",d=a.tv?a.tv.name:S.name,e=a.tv?a.tv.episode:"",f=b+"|"+c+"|"+d+"|["+e+"]";return f}function c(){if(J.viewedInfo){var a=j(J.viewedInfo.d),b=j(J.viewedInfo.vd),c="";J.viewedInfo.index?(c+="上次看到第"+J.viewedInfo.index+"集 ",a&&(c+=b+" / "+a)):a&&(c+="上次看到 "+b+" / "+a),$(".viewedInfo").html(c).css({visibility:"visible"})}}function d(){var a=S.mediaInfo.list[S.selectedSite],c={videoID:S.videoID,videoName:decodeURIComponent(S.name),videoType:S.topCategory,videoTarget:N,videoOriType:S.originCate};a.forEach(function(a){b(a);a.name=a.tv?a.tv.name:S.name}),localStorage.downloadInfo=JSON.stringify(a),localStorage.downloadVideo=JSON.stringify(c);var d;d=z.isLocal?"http://10.88.0.111/tonight/server-v3/static/client/src/html/detail.html":z.webDomain+"/video/downloads",C(!isNaN(U)&&U>3.2?{url:d,t:"缓存",tbh:!0,pdr:!1,ahl:!1}:{url:d,t:"缓存",tbh:!0,pdr:!1})}function e(){$("body").on(z.clickEvent,".more-select a",function(){var a=$(this),b=a.data("type");"share"==b||"report"==b&&f()}),$("body").on("touchend",".report-link",function(a){setTimeout(function(){f()},400),a.preventDefault()}),$("body").on("touchend",".btn-con button",function(a){var b=$(this),c=b.data("type");if("cancel"==c)$(".report-pop").remove(),$(".pageView").css("height","auto"),$("body").css("height","auto"),$("html").css("height","auto");else if("confirm"==c){var d=$(".report-con input:checked").data("type"),e=$.trim($(".report-con textarea").val()),f=b.data("id"),g=b.data("name"),h="";if($(".report-con input:checked").size()){if("other"==d&&e.length>0)h=d+"_"+e;else{if("other"==d)return;h=d}ga("send","event","Video Detail","report",g+"_"+f+"_"+h),$(".report-pop").remove(),$(".pageView").css("height","auto"),$("body").css("height","auto"),$("html").css("height","auto"),M({title:"提交成功",timer:1e3,type:"success",showConfirmButton:!1})}}a.preventDefault()}),$("body").on("touchend",".report-bg",function(a){$(".report-pop").remove(),$(".pageView").css("height","auto"),$("body").css("height","auto"),$("html").css("height","auto"),a.preventDefault()})}function f(){var a=$(".pageView").data("result"),b=a.content.media.type,c=a.content.video_id,d=decodeURIComponent(a.content.name),e="";"tv"!=b&&(e="display: none;"),$(".more-select-con").size()>0&&$(".more-select-con").remove(),$(".pageView").css("height","100%"),$("body").css("height","100%"),$("html").css("height","100%"),$("html").scrollTop(0);var f=['<div class="report-con">','<p><label><input class="video-report" name="video-report" data-type="error_play" type="radio" >无法播放</label></p>','<p style="'+e+'"><label><input class="video-report" name="video-report" data-type="error_update" type="radio" >剧集更新慢</label></p>','<p><label><input class="video-report" name="video-report" data-type="error_cache" type="radio" >无法缓存</label></p>','<p><label><input class="video-report" name="video-report" data-type="error_info" type="radio" >影片信息有误</label></p>','<p><label><input class="video-report" name="video-report" data-type="error_celebrity" type="radio" >艺人信息有误</label></p>','<p><label><input class="video-report" name="video-report" data-type="add" type="radio" >催促小编添加片源</label></p>',"</div>"].join("");M({title:"",text:f,showCancelButton:!0,confirmButtonColor:"#DD6B55",confirmButtonText:"确定",cancelButtonText:"取消",closeOnConfirm:!1,closeOnCancel:!0,html:!0},function(a){if(a&&$(".report-con input:checked").size()){var b=$(".report-con input:checked").data("type"),e=$.trim($(".report-con textarea").val()),f="";if("other"==b&&e.length>0)f=b+"_"+e;else{if("other"==b)return;f=b}console.log(f),ga("send","event","Video Detail","report",d+"_"+c+"_"+f),M({title:"提交成功",timer:1e3,type:"success",showConfirmButton:!1})}$(".pageView").css("height","auto"),$("body").css("height","auto"),$("html").css("height","auto")})}function g(a,c){var d='<div class="tvList clearfix">',e=1;return c&&(e=c.split("-")[0]),"jishi"!=S.originCate&&"zongyi"!=S.originCate&&"youxi"!=S.originCate&&s(a,0,e),a.forEach(function(a,c){var e="";S.targetEpisodeIndex&&a.tv.episode==S.targetEpisodeIndex&&(e=" highlight");var f=b(a),g=z.appScheme+"play?h="+f,h=a.tv?a.tv.episode:"";d+='<a href="'+g+'" class="episode'+e+'" data-episode="'+a.tv.episode+'" data-vname="'+a.tv.name+'" data-sname="'+a.site_name+'" data-hash="'+a.hash+'" data-eindex="'+a.tv.episode+'">'+h+"</a>"}),d+="</div>"}function h(a){var b="unknown";return a&&a.length&&(b=a[0].alias?a[0].alias.split("/")[1]:"tv"),b}function i(a){var b={},c=[],d="";return a.forEach(function(a){if(a.tv&&a.tv.episode){var e=a.tv.episode,f=e.match(/^[12]\d{3}/);f&&(f=f[0],S.targetEpisodeIndex&&S.targetEpisodeIndex==e&&(d=f),b[f]||(b[f]=[],c.push(f)),b[f].push(a))}}),{years:c,lists:b,targetYear:d}}function j(a){var b="";if(a>0){var c=Math.floor(a/3600),d=Math.floor((a-3600*c)/60),e=a%60,f=c>0?c+":":"",g=d>9?d+":":"0"+d+":",h=e>9?e+"":"0"+e;b=f+g+h}return b}function k(a){var b,c={},d=[],e=1,f=0,g=a[0];g.tv&&g.tv.episode&&(e=parseInt(a[0].tv.episode));for(var h=100,i=Math.floor(e/h);a[f];){var j=(i+1)*h,k=j-e+1,l=f+k,m=a.slice(f,l),n=m[m.length-1];n&&n.tv&&n.tv.episode&&(j=parseInt(m[m.length-1].tv.episode));var o=e.toString()+"-"+j.toString();d.push(o);var p=S.targetEpisodeIndex;p&&p>=e&&j>=p&&(b=o),c[o]=m,e=j+1,f=l,i+=1}return{ranges:d.reverse(),lists:c,targetRange:b}}function l(a,e){var f=$(a),h=f.data("name");if(h!=S.selectedSite){f.addClass("selected").siblings("a").removeClass("selected"),S.selectedSite=h;var j=S.mediaInfo.list,l=j[h];if(l&&l.length){var m=S.isDesc?l[l.length-1]:l[0];if("sohu"==h?$(".download-guide").show().css("opacity","0.7"):$(".download-guide").hide(),S.targetEpisodeIndex){for(var n=null,o=0;o<l.length;o++){var p=l[o];if(p.tv&&p.tv.episode==S.targetEpisodeIndex){n=p;break}}n&&(m=n)}S.targetEpisodeIndex=m.tv&&m.tv.episode?m.tv.episode:1;var q=b(m),r=$(".detail-item").find(".play"),s=z.appScheme+"play?h="+q,t=z.appScheme+"download?h="+q;r.attr("href",s),r.data("vname",m.tv?m.tv.name:decodeURIComponent(S.name)),r.data("sname",m.site_name),r.data("hash",m.hash),r.data("eindex",S.targetEpisodeIndex);var u=$(".detail-item").find(".download");if(S.multiple){u.off(z.clickEvent),u.text("分集缓存").addClass("complex-episode").on(z.clickEvent,d);var v="";if("show"==S.topCategory){l.map(function(a){var c=b(a);a.url=z.appScheme+"play?h="+c,a.tv||(a.tv={});var d=a.tv.screenshot;d||(a.tv.screenshot=z.staticPath+"/images/mediaThumbDefault.jpg")}),Q=i(l);var w=Q.years;if(N=Q.targetYear,w){var x=w.length>1?"":' style="display:none"';v+='<div class="yearSelectWrapper"'+x+'><div class="yearSelect clearfix">',w.forEach(function(a,b){v+='<a data-year="'+a+'" class="year">'+a+"</a>",b==w.length-1&&(v+="</div></div>")})}}else if("tv"==S.topCategory&&"dongman"==S.originCate){R=k(l),N=R.targetRange;var y=R.ranges;if(y){var x=y.length>1?"":' style="display:none"';v+='<div class="rangeSelectWrapper"'+x+'><div class="rangeSelect clearfix">',y.forEach(function(a,b){v+='<a data-range="'+a+'" class="range">'+a+"</a>",b==y.length-1&&(v+="</div></div>")})}}else v=g(l);e&&!isNaN(U)&&U>=3.7&&L.checkSupported(S.originCate),$("#card-select").html(v);var B=$("#card-select").find(".yearSelectWrapper"),C=$("#card-select").find(".rangeSelectWrapper");if(B.size()){var D=B.find("a.year"),E="iPad"==X?84:56;B.css("width",z.screenWidth);var F=E*D.length,G=B.find(".yearSelect");G.css("width",F);var H;$.each(D,function(a,b){var c=$(b);c.data("year")==Q.targetYear&&(H=c[0],c.trigger(z.clickEvent))}),H&&"scrollIntoViewIfNeeded"in H&&H.scrollIntoViewIfNeeded()}else if(C.size()){var I=C.find("a.range");C.css("width",z.screenWidth);var G=C.find(".rangeSelect"),F=80*I.length;G.css("width",F);var H;$.each(I,function(a,b){var c=$(b);c.data("range")==R.targetRange&&(H=c[0],c.trigger(z.clickEvent))}),H&&"scrollIntoViewIfNeeded"in H&&H.scrollIntoViewIfNeeded()}}else{var t=z.appScheme+"download?h="+q,K=decodeURIComponent(S.name),M=S.selectedSite,j=S.mediaInfo.list,l=j[M],O=l[0].hash,P=0;u.text("缓存").attr("href",t),u.off(z.clickEvent),u.on(z.clickEvent,function(){ga("send","event","Video Detail","download",K+"_"+S.videoID+"_"+P,{nonInteraction:1}),ga("send","event","Video Site Name","download",K+"_"+S.videoID+"_"+M+"_"+O,{nonInteraction:1})})}e?J.viewDidReShow():(c(),A.send("notification?text=视频源已切换&success=1"))}else console.warn("has no medias for %s !",h),ga("send","event","Video Site Empty","error",decodeURIComponent(S.name)+"_"+S.videoID+"_"+S.selectedSite,{nonInteraction:1})}}function m(a){var b=a,c=decodeURIComponent(S.name),d=b.data("sname"),e=b.data("hash"),f=b.data("eindex");"movie"==S.mediaInfo.type&&(f=0),ga("send","event","Video Detail","play",c+"_"+S.videoID+"_"+f,{nonInteraction:1}),ga("send","event","Video Site Name","play",c+"_"+S.videoID+"_"+d+"_"+e,{nonInteraction:1})}function n(){console.log("error");var a=['<div class="error-notice">',"<p>非常抱歉，此视频已失效</p>","<p>如果您已经订阅此视频</p>",'<a class="unfollow" href="javascript:;">取消订阅</a>',"<p>如果此视频存在于观看记录列表，请手动删除</p>","</div>"];T.html(a.join("")),T.on(z.clickEvent,"a.unfollow",function(){var a="unsubscribe?";a+="id="+bb,A.send(a),console.log(a)})}function o(a){var b=$(".pageView").data("result");console.log(b),R={},Q={},S={},S.videoID=a.videoID;var c=a.videoName;if(!c){var d=B("video_name");c=d?decodeURIComponent(d):"视频详情"}S.name=c;var e=a.preData?!0:!1;if(T.on(z.clickEvent,"a.year",function(){var a=$(this);if(!a.hasClass("current")){a.addClass("current").siblings().removeClass("current");var b=a.data("year");N=b;var c=Q.lists[b],d=E({current:S.targetEpisodeIndex,list:c});$("#card-select").find(".zongyi_list").remove(),$("#card-select").append(d)}}),T.on(z.clickEvent,"a.range",function(){var a=$(this);if(!a.hasClass("current")){a.addClass("current").siblings().removeClass("current");var b=a.data("range");N=b;var c=R.lists[b],d=g(c,b);$("#card-select").find(".tvList").remove(),$("#card-select").append(d)}}),T.on(z.clickEvent,"a.episode",function(){$(".viewedInfo").css({visibility:"hidden"});var a=$(this),b=a;a.parent(".zongyi_list_item").size()&&(b=a.parent(".zongyi_list_item")),S.targetEpisodeIndex=b.data("episode"),b.siblings().removeClass("highlight"),b.addClass("highlight")}),e){var f=a.preData,i=f.score?f.score.toFixed(1):"7.0",k=x(i);f.score=i,f.preShow=!0,f.rClass=k,T.html(D(a.preData))}if(J.viewedInfo&&(J.viewedInfo.d=j(J.viewedInfo.d),J.viewedInfo.vd=j(J.viewedInfo.vd),J.viewedInfo.vd.length&&(S.targetEpisodeIndex=J.viewedInfo.index)),b.status){var o=b.content,q=(o.name,""),s="",t=[],u=[];O=o.series_id,P=o.series,o.media&&0!=o.media.total||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":media",{nonInteraction:1}),o.category&&o.category[0].alias&&0!=o.category[0].alias.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":category",{nonInteraction:1}),o.tags&&o.tags[0].name&&0!=o.tags[0].name.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":tag",{nonInteraction:1}),o.area&&o.area[0].name&&0!=o.area[0].name.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":area",{nonInteraction:1}),o.douban.score&&0!=o.douban.score||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":score",{nonInteraction:1}),o.summary&&0!=o.summary.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":summary",{nonInteraction:1}),o.runtime&&0!=o.runtime.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":runtime",{nonInteraction:1}),o.year&&0!=o.year.length||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":year",{nonInteraction:1}),o.pubdate&&"0000-00-00"!=o.pubdate||ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":pubdate",{nonInteraction:1}),o.celebrity?(o.celebrity.directors&&0!=o.celebrity.directors[0].name.cn.length||t.push("directors"),o.celebrity.actors&&0!=o.celebrity.actors[0].name.cn.length||t.push("actors"),o.celebrity.screenwriters&&0!=o.celebrity.screenwriters[0].name.cn.length||t.push("screenwriters"),q=t.join(",")):q="directors,actors,screenwriters",q.length>0&&ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":"+q,{nonInteraction:1}),o.bd||o.douban||o.qh?(o.bd.id&&0!=o.bd.id.length&&0!=o.bd.id||u.push("baidu_id"),o.douban.id&&0!=o.douban.id.length&&0!=o.douban.id||u.push("douban_id"),s=u.join(",")):s="baidu_id,douban_id",s.length>0&&ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":"+s,{nonInteraction:1}),S.mediaInfo=o.media;var v=S.mediaInfo.site;if(0==v.length)return T.find(".card").empty(),A.send("notification?text=未能获取到视频信息"),$(".content").append('<div class="no-play">暂时没有可用的视频源</div>'),void ga("send","event","Video Detail","error",o.name+"_"+o.video_id+":site",{nonInteraction:1});var y=o.media.type,G=h(o.category),H=o.icon.s240,c=o.name,I=0,K=0,L=e?f.score:"7.0";o.runtime&&o.runtime.length&&(runtimeArr=o.runtime,I=runtimeArr[1],K=runtimeArr[0]),S.name=encodeURIComponent(c),S.multiple="tv"==S.mediaInfo.type||"show"==S.mediaInfo.type,S.cover=o.icon.s240,S.total=S.mediaInfo.total,S.latest=o.tv&&o.tv.latest?o.tv.latest:1,S.cover=encodeURIComponent(H),S.date=o.year,S.duration=K,S.topCategory=y,S.originCate=G,S.cateAlias=o.category&&o.category[0].alias?o.category[0].alias:"",S.isDesc="dongman"==G||"youxi"==G,S.rating=0==o.douban.score?L:o.douban.score;var M={img:S.cover,title:"我正在用《"+z.appName+"》看: "+decodeURIComponent(S.name),description:o.summary,url:"https://itunes.apple.com/cn/app/id463709549",platform:"weixin",weixin:{scene:1}};window[z.appUAPrefix].shareInfo=M;var V=D({preShow:!1,score:S.rating,name:c,pubdate:o.pubdate,area:o.area,runtime:I,year:S.date,celebrity:o.celebrity,category:o.category,tags:o.tags,summary:o.summary,cover:H,verify:o.verify,multiple:S.multiple,sites:v,viewedInfo:J.viewedInfo,canPlay:o.media_isvalid});$(".pageView").html(V);var W=T.find(".siteList");if(W.size()){var X=W.children("a");$first=X.first(),linkWidth=$first.width();{W.parent()}W.css("width",linkWidth*X.size()+10),W.on(z.clickEvent,"a",function(a,b){cb=0,clearTimeout(db),l(this,b)}),J.viewedInfo&&J.viewedInfo.site&&W.children("a."+("56"==J.viewedInfo.site?"m56":J.viewedInfo.site)).size()?W.children("a."+("56"==J.viewedInfo.site?"m56":J.viewedInfo.site)).trigger(z.clickEvent,!0):W.children("a").first().trigger(z.clickEvent,!0)}var Y=T.find(".detail-cards .button");Y.on(z.clickEvent,p),Y.first().trigger(z.clickEvent);var Z=T.find("#card-select");Z.on(z.clickEvent,"a.episode",function(){var a=$(this);m(a)}),T.on(z.clickEvent,".play",function(){var a=$(this);m(a)}),w();var _=x(S.rating);$(".score-star").addClass(_),$(".buttons").css({visibility:"visible"})}else n();!isNaN(U)&&U>z.appVersion&&($(".actions .download").hide(),$(".actions .play").css({display:"block"})),O>0&&r(),T.on(z.clickEvent,".video-item",function(){var a,b;a=z.isLocal?"http://10.88.0.111/tonight/server-v3/static/client/src/html/detail.html":z.webDomain+"/video/detail";var c=$(this).data();F.set(c),C({url:a+"?video_id="+c.videoId+"&video_name="+c.name,t:c.name,tbh:!0,pdr:!1,pcf:!0,rb:{t:"1",v:"share"},ban:{i:2,p:2}}),"series"==c.type?b="Series":"recommend"==c.type&&(b="Recommand"),ga("send","event","Video "+b+" To Video Detail","click",c.name+"_"+c.videoId,{nonInteraction:1})}),0==o.download_isvalid&&($(".actions .download").hide(),$(".actions .play").css({display:"block",width:"22%"})),ga("send","pageview",{page:"/v3/detail?videoID="+S.videoID,title:decodeURIComponent(S.name)+"-详情-"+z.appUAPrefix})}function p(){var a=$(this);if(!a.hasClass("current")){var b=$("#card-"+a.data("target"));if(a.is(":visible")){{var c=a.offset();c.left,c.width}a.addClass("current").siblings().removeClass("current"),b.show().siblings(".card").hide()}else b.show().siblings(".card").hide();"related"==a.data("target")&&0==$("#card-related").find(".video-item").length&&0==$("#card-related").find(".message").length&&0==$(".loader").length&&q(X,Y)}}function q(a,b){0==$(".loader").length&&$("#card-related").append(G.init());var c=9;("iPad"==a||"unknown"==a)&&(c=15),$.ajax({url:z.apiDomain+"/video/alsobought"+z.ajaxCallback,data:{video_id:b,count:c},type:"GET",dataType:"json",success:function(a){if(a.status&&a.content.list){var a=a.content.list;a.length>0?(T.find("#card-related").append(H(a)),ga("send","event","Video Recommand","click",decodeURIComponent(S.name)+"_"+b,{nonInteraction:1})):(T.find("#card-related").append('<div class="message" style="text-align: center;">暂无相关视频</div>'),ga("send","event","Video Recommand","error",decodeURIComponent(S.name)+"_"+b,{nonInteraction:1}))}else T.find("#card-related").append('<div class="message" style="text-align: center;">暂无相关视频</div>'),ga("send","event","Video Recommand","error",decodeURIComponent(S.name)+"_"+b,{nonInteraction:1});$(".loader").length>0&&G.hide()},error:function(){console.log("recommend error"),$(".loader").length>0&&G.hide(),T.find("#card-related").append('<div class="message" style="text-align: center;">暂无相关视频</div>'),ga("send","event","Request","fail","Video Recommand:"+decodeURIComponent(S.name)+"_"+b,{nonInteraction:1})}})}function r(){if(P&&P.list){var a=P.list,b=['<div class="series-video">',"<h3>系列作品</h3>",'<div class="series-scroller-con">','<div class="series-con detail-scroller"></div>',"</div>","</div>"];a.length>0&&(T.append(b.join("")),$(".series-con").append(I(a)),$(".detail-scroller").each(function(){var a=$(this),b=$(this).find("a"),c=b.first().width();a.css("width",b.length*c)}))}}function s(a,b,c){if(b<a.length){var d=a[b].tv.episode,e=a[b].site_name;d!=c&&(ga("send","event","Video Episode","error",decodeURIComponent(S.name)+"_"+S.videoID+"_"+e+"_"+c,{nonInteraction:1}),c++),b++,c++,s(a,b,c)}}function t(){K&&(J.subscribed=0),_=J.subscribed?J.subscribed:"0",console.log("pageInfo="+JSON.stringify(J)),console.log("isSubcribed="+_),0==_?$(".follow").removeClass("hasfollow"):1==_&&$(".follow").addClass("hasfollow"),T.on(z.clickEvent,".follow",function(){if(0==_){var a="subscribe?";a+="id="+S.videoID+"&name="+S.name+"&cover="+S.cover,a+="&multi="+S.multiple+"&rating="+S.rating+"&duration="+S.duration,a+="&date="+S.date+"&total="+S.total+"&current="+S.targetEpisodeIndex+"&site="+S.selectedSite,a+="&latest="+S.latest}else{var a="unsubscribe?";a+="id="+S.videoID}0==Z&&(Z=1,A.send(a)),ga("send","event","Video Detail","follow",decodeURIComponent(S.name)+"_"+S.videoID,{nonInteraction:1})}),!isNaN(U)&&U>=3.9&&$(".follow").show()}function u(a){Z=0,1==a?(J.subscribed=1,_=J.subscribed,$(".follow").addClass("hasfollow")):console.log("didSubscribeVideo failed")}function v(a){Z=0,1==a?(J.subscribed=0,_=J.subscribed,$(".follow").removeClass("hasfollow")):console.log("didUnSubscribeVideo failed")}function w(){var a="checksubscribe?";a+="id="+S.videoID+"&name="+S.name+"&cover="+S.cover,a+="&multi="+S.multiple+"&rating="+S.rating+"&duration="+S.duration,a+="&date="+S.date+"&total="+S.total+"&current="+S.targetEpisodeIndex+"&site="+S.selectedSite,a+="&latest="+S.latest,A.send(a),setTimeout(function(){t()},500)}function x(a){var b=35;return a&&a.length&&(a=parseFloat(a),0!=a&&(b=Math.round(a/.5),b%2==1&&(b-=1),b="star-"+b/4*10)),b}function y(){$(".pageView").on(z.clickEvent,".filter-btns",function(){var a,b=$(this),c=b.data("target"),d=c.split(":")[0],e=b.text(),f="0";console.log(c),a=z.isLocal?"http://10.88.0.110/tonight-v3/server-v3/static/client/src/html/list.html":z.webDomain+"/video/list",C({url:a+"?cate_alias="+f+"&from=home&filter="+c,t:e,tbh:!0,pdr:!1,ahl:!1,ck:1}),ga("send","event","Detail To Video List","click",e+"_"+d),ga("send","event","Search Result","search",d+":"+e,{nonInteraction:1}),ga("send","pageview","/v3/search?t="+d+"&q="+e)})}var z=a("../config"),A=a("../utils/jsToOC"),B=a("../utils/getUrlParam"),C=a("../utils/openPage"),D=a("../templates/detail"),E=a("../templates/zyList"),F=a("../utils/localStorage"),G=a("../views/loading"),H=a("../templates/recommendVideo"),I=a("../templates/videoSeries"),J=a("../utils/global"),K=B("debug"),L=(a("../utils/pageBannerSet"),a("../utils/supportedApps")),M=a("../plugins/sweetalert");a("../plugins/cookie");var N,O,P,Q={},R={},S={},T=$(".pageView"),U=parseFloat($.cookie("xy_a_version")),V=($.cookie("xy_d_model"),J.appInfo.deviceInfo.deviceType),W=1;"iPad"==V&&(W=2);J.appDidLoadNativeAd=function(a){console.log("appDidLoadNativeAd");var b=JSON.parse(a);"iPad"==V&&b.length==W&&T.append('<div class="native-ad-con clearfix"></div>');for(var c=0;c<b.length;c++){var d=b[c].title,e=b[c].index,f=b[c].img,g=(b[c].icon,b[c].desc),h=['<div class="native-ad"><a data-href="nativeadclick?index='+e+'" class="native-ad-link">','<img src="'+f+'">','<div class="title-con">','<span class="ad-icon">广告</span>','<span class="title">'+d+"</span>",'<span class="caption">'+g+"</span>","</div>",'<div class="ad-notice"></div>',"</a>","</div>"].join("");"iPad"==V?b.length==W&&$(".native-ad-con").append(h):T.append(h),A.send("nativeadrender?index="+e)}T.on(z.clickEvent,".native-ad-link",function(){var a=$(this),b=a.data("href");console.log(b),A.send(b)}),T.on(z.clickEvent,".native-ad .close",function(){$(this).parents(".native-ad").remove()})};var X,Y,Z=0,_=0,ab=B("video_name"),bb=B("video_id"),cb=0,db=null;console.log(B("video_name")),console.log(ab),J.viewDidReShow=function(){console.log("view did reshow");var a=B("video_id");A.send("checkviewed?vid="+a),db=setTimeout(function(){c()},1e3)},J.viewWillAppear=function(){console.log("view will appear")},J.viewDidAppear=function(){console.log("view did appear")},J.viewWillDisappear=function(){console.log("view will disappear")},J.viewDidDisappear=function(){console.log("view did disappear"),cb=0},J.appCanOpenUrl=function(a,b){L.markSupported(a,b,function(a){a&&a.length&&$(".pageView").prepend(a)})},J.didSubscribeVideo=function(a){u(a)},J.didUnsubscribeVideo=function(a){$(".error-notice").length>0?1==a&&($(".unfollow").prev().text("取消订阅成功，请返回"),$(".unfollow").remove()):v(a)},$(function(){var a=B("video_id"),b=B("video_name"),c={},d=$.cookie("xy_d_model");Y=a,c.preData=F.get(a),c.deviceType="iPhone",X="iPhone",d&&d.indexOf("iPad")>=0&&(c.deviceType="iPad",X="iPad"),c.videoID=a,c.videoName=b,A.send("checkviewed?vid="+a),setTimeout(function(){o(c)},500),y(),e(),$(document).on("touchmove",function(){$(".pageView").addClass("touch-invisible")}),$(document).on("touchend",function(){$(".pageView").removeClass("touch-invisible")})})}),define("config",[],function(){var a=location.hostname,b="10.88.0.111"==a||"192.168.1.102"==a||"10.88.0.110"==a||"dev.qisi.com"==a,c=-1!==a.indexOf("dev"),d=$(window);return{isLocal:b,ajaxCallback:b?"?callback=?":"",apiDomain:b||c?"http://hd.m.dev.jinerkan.com/v3/api":"http://hd.m.jinerkan.com/v3/api",webDomain:b||c?"http://hd.m.dev.jinerkan.com/v3/client":"http://hd.m.jinerkan.com/v3/client",screenWidth:d.width(),screenHeight:d.height(),staticPath:b?"/hdvideo/server-v3/static/client/src":"/static/m/hd/v3/client/src",appScheme:"qisi-hd://",appUAPrefix:"QISI-HD",clickEvent:"ontouchstart"in window?"tap":"click",appID:"463709549",appName:"高清影视",appSpecialName:"来自《高清影视》的专题推荐: ",appVersion:4.3}}),define("utils/jsToOC",["config"],function(a,b){function c(a){var b=document.createElement("IFRAME");b.setAttribute("src",d.appScheme+a),document.documentElement.appendChild(b),b.parentNode.removeChild(b),b=null}var d=a("config");b.send=c}),define("utils/getUrlParam",[],function(){return function(a){var b=window.location.search;if(""==b)return"";b=b.substring(1,b.length);for(var c=b.split("&"),d="",e=0;e<c.length;e++){var f=c[e],b=f.split("=");b.length<2||b[0]==a&&(d=b[1])}return d}}),define("utils/openPage",["utils/jsToOC","config","plugins/cookie"],function(a){var b=a("utils/jsToOC");a("plugins/cookie");var c=parseFloat($.cookie("xy_a_version"));return function(a){var d;d=!isNaN(c)&&c>=4.3?{nbs:1,tc:{r:255,g:255,b:255,a:1},bgc:{r:0,g:0,b:0,a:1},cc:{r:255,g:255,b:255,a:1},bs:1,ck:1,or:2,ar:0,ca:0}:{tc:{r:255,g:255,b:255,a:1},bgc:{r:25,g:25,b:25,a:1},btc:{r:0,g:0,b:0,a:1},cc:{r:255,g:255,b:255,a:1},bs:1,ck:1,or:2,ar:0,ca:0};var e=$.extend(!0,d,a),f=JSON.stringify(e);console.log(f),b.send("open/window?o="+encodeURIComponent(f))}}),define("plugins/cookie",[],function(){$.cookie=function(a,b,c){if("undefined"==typeof b){var d=null;if(document.cookie&&""!=document.cookie)for(var e=document.cookie.split(";"),f=0;f<e.length;f++){var g=$.trim(e[f]);if(g.substring(0,a.length+1)==a+"="){d=decodeURIComponent(g.substring(a.length+1));break}}return d}c=c||{},null===b&&(b="",c=$.extend({},c),c.expires=-1);var h="";if(c.expires&&("number"==typeof c.expires||c.expires.toUTCString)){var i;"number"==typeof c.expires?(i=new Date,i.setTime(i.getTime()+24*c.expires*60*60*1e3)):i=c.expires,h="; expires="+i.toUTCString()}var j=c.path?"; path="+c.path:"",k=c.domain?"; domain="+c.domain:"",l=c.secure?"; secure":"";document.cookie=[a,"=",encodeURIComponent(b),h,j,k,l].join("")}}),define("templates/detail",["templates/template"],function(a){return a("templates/template")("detail",function(a,b){try{var c=this,d=(c.$helpers,0),e=c.$escape,f=a.cover,g=a.name,h=a.rClass,i=a.score,j=a.runtime,k=a.year,l=a.canPlay,m=a.preShow,n=a.sites,o=c.$each,p=(a.site,a.index,a.viewedInfo),q=a.multiple,r=a.celebrity,s=(a.item,a.category),t=a.tags,u=a.area,v=a.pubdate,w=a.summary,x="";return x+='<div class="detail-item"> <div class="thumb"> <img class="placeholder" src="',d=3,x+=e(f),x+='"> <a class="report-link" href="javascript:;">报告小编</a> </div> <div class="content"> <h1 style="display:none">',d=7,x+=e(g),x+='</h1> <p class="score-star ',d=8,x+=e(h),x+='">',d=8,x+=e(i),x+="</p> <!-- <p>时长: ",d=9,x+=e(j),x+="</p> <p>时间: ",d=10,x+=e(k),x+="年</p> --> ",d=11,0==l?(x+=' <div class="no-play">暂时没有可用的视频源</div> ',d=13):m?(x+="  ",d=19):(x+=" ",d=20,n&&n.length&&(x+=' <div class="siteListWrapper"> <div class="siteList"> ',d=23,o(n,function(a){x+=' <a href="javascript:void(0);" class="',d=24,"56"==a?(x+="m56",d=24):(d=24,x+=e(a),d=24),x+='" data-name="',d=24,x+=e(a),x+='"></a> ',d=25}),x+=" </div> </div> ",d=28),x+=' <div class="viewedInfo"> ',d=30,p&&(x+=" ",d=31,p.index?(x+=" 上次看到第",d=32,x+=e(p.index),x+="集",d=32,p.d&&(x+=" ",d=32,x+=e(p.vd),x+=" / ",d=32,x+=e(p.d),d=32),x+=" ",d=33):p.d&&(x+=" 上次看到 ",d=34,x+=e(p.vd),x+=" / ",d=34,x+=e(p.d),x+=" ",d=35),x+=" ",d=36),x+=' </div> <div class="actions"> <a class="play" href="javascript:void(0);">播放</a> <span class="gap"></span> <a class="download" href="javascript:void(0);">缓存</a> </div> <!-- ',d=43,p&&(x+=" ",d=44,p.index?(x+=' <div class="viewedInfo">上次看到第',d=45,x+=e(p.index),x+="集",d=45,p.d&&(x+=" ",d=45,x+=e(p.vd),x+=" / ",d=45,x+=e(p.d),d=45),x+="</div> ",d=46):p.d&&(x+=' <div class="viewedInfo">上次看到 ',d=47,x+=e(p.vd),x+=" / ",d=47,x+=e(p.d),x+="</div> ",d=48),x+=" ",d=49),x+=" --> ",d=50),x+=' <a class="follow" href="javascript:void(0);"></a> <p class="download-guide">如在线播放卡顿，可缓存后观看↑</p> </div> <div class="background" style="background-image:url(',d=54,x+=e(f),x+=')"></div> </div> <div class="detail-cards"> ',d=58,q?(x+=' <div class="buttons"> ',d=60,1==l&&(x+=' <div class="button" data-target="select">剧集</div> <div class="separator"></div> ',d=63),x+=' <div class="button" data-target="summary">详情</div> <div class="separator"></div> <div class="button" data-target="related">推荐</div>  </div> ',d=69):(x+=' <div class="buttons"> <div class="button" data-target="summary">详情</div> <div class="separator"></div> <div class="button" data-target="related">推荐</div>  </div> ',d=76),x+=' <div class="cards"> ',d=78,m?(x+=' <div class="card"></div> ',d=80):(x+=' <div class="card" id="card-summary" style="display:none;"> ',d=82,r&&(x+=' <div class="video-celebrity"> ',d=84,r.directors&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">导演:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=85,o(r.directors,function(a,b){d=85,b>0&&(x+="&nbsp;/&nbsp;",d=85),x+='<a href="javascript:;" class="filter-btns" data-target="celebrity:',d=85,x+=e(a.name.cn),x+='">',d=85,x+=e(a.name.cn),x+="</a>",d=85}),x+="</span></p> ",d=86),x+=" ",d=87,r.screenwriters&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">编剧:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=88,o(r.screenwriters,function(a,b){d=88,b>0&&(x+="&nbsp;/&nbsp;",d=88),x+='<a href="javascript:;" class="filter-btns" data-target="celebrity:',d=88,x+=e(a.name.cn),x+='">',d=88,x+=e(a.name.cn),x+="</a>",d=88}),x+="</span></p> ",d=89),x+=" ",d=90,r.actors&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">主演:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=91,o(r.actors,function(a,b){d=91,b>0&&(x+="&nbsp;/&nbsp;",d=91),x+='<a href="javascript:;" class="filter-btns" data-target="celebrity:',d=91,x+=e(a.name.cn),x+='">',d=91,x+=e(a.name.cn),x+="</a>",d=91}),x+="</span></p> ",d=92),x+=" <!-- ",d=93,s&&(x+=' <p class="video-celebrity-info"><span class="video-celebrity-title">类型:&nbsp;&nbsp;</span>',d=94,o(s,function(a,b){d=94,b>0&&(x+="&nbsp;/&nbsp;",d=94),d=94,x+=e(a.name),d=94}),x+="</p> ",d=95),x+=" --> ",d=96,t&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">标签:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=97,o(t,function(a,b){d=97,b>0&&(x+="&nbsp;/&nbsp;",d=97),x+='<a href="javascript:;" class="filter-btns" data-target="tag:',d=97,x+=e(a.name),x+='">',d=97,x+=e(a.name),x+="</a>",d=97}),x+="</span></p> ",d=98),x+=" ",d=99,u&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">制片国家/地区:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=100,o(u,function(a,b){d=100,b>0&&(x+="&nbsp;/&nbsp;",d=100),d=100,x+=e(a.name),d=100}),x+="</span></p> ",d=101),x+=" ",d=102,v&&(x+=' <p class="video-celebrity-info long-info clearfix"><span class="video-celebrity-title">上映日期:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=103,x+=e(v),x+="</span></p> ",d=104),x+=" ",d=105,j&&(x+=' <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">片长:&nbsp;&nbsp;</span><span class="video-celebrity-words">',d=106,x+=e(j),x+="</span></p> ",d=107),x+=" </div> ",d=109),x+=' <div class="video-summary">',d=110,x+=e(w),x+='</div> </div> <div class="card" id="card-select" style="display:none;"></div> <div class="card" id="card-comments" style="display:none;">评论</div> <div class="card recommend-video" id="card-related" style="display:none;"></div> ',d=116),x+=" </div> </div>",new String(x)}catch(y){throw{filename:b,name:"Render Error",message:y.message,line:d,source:'<div class="detail-item">\n    <div class="thumb">\n        <img class="placeholder" src="{{cover}}">\n        <a class="report-link" href="javascript:;">报告小编</a>\n    </div>\n    <div class="content">\n        <h1 style="display:none">{{name}}</h1>\n        <p class="score-star {{rClass}}">{{score}}</p>\n        <!-- <p>时长: {{runtime}}</p>\n        <p>时间: {{year}}年</p> -->\n        {{if canPlay == 0}}\n            <div class="no-play">暂时没有可用的视频源</div>\n        {{else if preShow}}\n            <!-- <div class="actions disabled">\n                <a class="play">播放</a>\n                <span class="gap"></span>\n                <a class="download">缓存</a>\n            </div> -->\n        {{else}}\n            {{if sites && sites.length}}\n                <div class="siteListWrapper">\n                    <div class="siteList">\n                    {{each sites as site index}}\n                    <a href="javascript:void(0);" class="{{if site==\'56\'}}m56{{else}}{{site}}{{/if}}" data-name="{{site}}"></a>\n                    {{/each}}\n                    </div>\n                </div>\n            {{/if}}\n            <div class="viewedInfo">\n                {{if viewedInfo}}\n                    {{if viewedInfo.index}}\n                        上次看到第{{viewedInfo.index}}集{{if viewedInfo.d}} {{viewedInfo.vd}} / {{viewedInfo.d}}{{/if}}\n                    {{else if viewedInfo.d}}\n                        上次看到 {{viewedInfo.vd}} / {{viewedInfo.d}}\n                    {{/if}}\n                {{/if}}\n            </div>\n            <div class="actions">\n                <a class="play" href="javascript:void(0);">播放</a>\n                <span class="gap"></span>\n                <a class="download" href="javascript:void(0);">缓存</a>\n            </div>\n            <!-- {{if viewedInfo}}\n                {{if viewedInfo.index}}\n                    <div class="viewedInfo">上次看到第{{viewedInfo.index}}集{{if viewedInfo.d}} {{viewedInfo.vd}} / {{viewedInfo.d}}{{/if}}</div>\n                {{else if viewedInfo.d}}\n                    <div class="viewedInfo">上次看到 {{viewedInfo.vd}} / {{viewedInfo.d}}</div>\n                {{/if}}\n            {{/if}} -->\n        {{/if}}\n        <a class="follow" href="javascript:void(0);"></a>\n        <p class="download-guide">如在线播放卡顿，可缓存后观看↑</p>\n    </div>\n    <div class="background" style="background-image:url({{cover}})"></div>\n</div>\n\n<div class="detail-cards">\n    {{if multiple}}\n    <div class="buttons">\n        {{if canPlay == 1}}\n        <div class="button" data-target="select">剧集</div>\n        <div class="separator"></div>\n        {{/if}}\n        <div class="button" data-target="summary">详情</div>\n        <div class="separator"></div>\n        <div class="button" data-target="related">推荐</div>\n        <!-- <div class="arrow"></div> -->\n    </div>\n    {{else}}\n    <div class="buttons">\n        <div class="button" data-target="summary">详情</div>\n        <div class="separator"></div>\n        <div class="button" data-target="related">推荐</div>\n        <!-- <div class="arrow"></div> -->\n    </div>\n    {{/if}}\n    <div class="cards">\n        {{if preShow}}\n            <div class="card"></div>\n        {{else}}\n            <div class="card" id="card-summary" style="display:none;">\n            {{if celebrity}}\n                <div class="video-celebrity">\n                    {{if celebrity.directors}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">导演:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{each celebrity.directors as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}<a href="javascript:;" class="filter-btns" data-target="celebrity:{{item.name.cn}}">{{item.name.cn}}</a>{{/each}}</span></p>\n                    {{/if}}\n                    {{if celebrity.screenwriters}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">编剧:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{each celebrity.screenwriters as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}<a href="javascript:;" class="filter-btns" data-target="celebrity:{{item.name.cn}}">{{item.name.cn}}</a>{{/each}}</span></p>\n                    {{/if}}\n                    {{if celebrity.actors}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">主演:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{each celebrity.actors as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}<a href="javascript:;" class="filter-btns" data-target="celebrity:{{item.name.cn}}">{{item.name.cn}}</a>{{/each}}</span></p>\n                    {{/if}}\n                    <!-- {{if category}}\n                        <p class="video-celebrity-info"><span class="video-celebrity-title">类型:&nbsp;&nbsp;</span>{{each category as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}{{item.name}}{{/each}}</p>\n                    {{/if}} -->\n                    {{if tags}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">标签:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{each tags as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}<a href="javascript:;" class="filter-btns" data-target="tag:{{item.name}}">{{item.name}}</a>{{/each}}</span></p>\n                    {{/if}}\n                    {{if area}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">制片国家/地区:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{each area as item index}}{{if index > 0}}&nbsp;/&nbsp;{{/if}}{{item.name}}{{/each}}</span></p>\n                    {{/if}}\n                    {{if pubdate}}\n                        <p class="video-celebrity-info long-info clearfix"><span class="video-celebrity-title">上映日期:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{pubdate}}</span></p>\n                    {{/if}}\n                    {{if runtime}}\n                        <p class="video-celebrity-info clearfix"><span class="video-celebrity-title">片长:&nbsp;&nbsp;</span><span class="video-celebrity-words">{{runtime}}</span></p>\n                    {{/if}}\n                </div>\n            {{/if}}\n                <div class="video-summary">{{summary}}</div>\n                \n            </div>\n            <div class="card" id="card-select" style="display:none;"></div>\n            <div class="card" id="card-comments" style="display:none;">评论</div>\n            <div class="card recommend-video" id="card-related" style="display:none;"></div>\n        {{/if}}\n    </div>\n</div>'.split(/\n/)[d-1].replace(/^\s+/,"")}
-}})}),!function(){function a(a,b){return(/string|function/.test(typeof b)?h:g)(a,b)}function b(a,c){return"string"!=typeof a&&(c=typeof a,"number"===c?a+="":a="function"===c?b(a.call(a)):""),a}function c(a){return l[a]}function d(a){return b(a).replace(/&(?![\w#]+;)|[<>"']/g,c)}function e(a,b){if(m(a))for(var c=0,d=a.length;d>c;c++)b.call(a,a[c],c,a);else for(c in a)b.call(a,a[c],c)}function f(a,b){var c=/(\/)[^\/]+\1\.\.\1/,d=("./"+a).replace(/[^\/]+$/,""),e=d+b;for(e=e.replace(/\/\.\//g,"/");e.match(c);)e=e.replace(c,"/");return e}function g(b,c){var d=a.get(b)||i({filename:b,name:"Render Error",message:"Template not found"});return c?d(c):d}function h(a,b){if("string"==typeof b){var c=b;b=function(){return new k(c)}}var d=j[a]=function(c){try{return new b(c,a)+""}catch(d){return i(d)()}};return d.prototype=b.prototype=n,d.toString=function(){return b+""},d}function i(a){var b="{Template Error}",c=a.stack||"";if(c)c=c.split("\n").slice(0,2).join("\n");else for(var d in a)c+="<"+d+">\n"+a[d]+"\n\n";return function(){return"object"==typeof console&&console.error(b+"\n\n"+c),b}}var j=a.cache={},k=this.String,l={"<":"&#60;",">":"&#62;",'"':"&#34;","'":"&#39;","&":"&#38;"},m=Array.isArray||function(a){return"[object Array]"==={}.toString.call(a)},n=a.utils={$helpers:{},$include:function(a,b,c){return a=f(c,a),g(a,b)},$string:b,$escape:d,$each:e},o=a.helpers=n.$helpers;a.get=function(a){return j[a.replace(/^\.\//,"")]},a.helper=function(a,b){o[a]=b},define("templates/template",[],function(){return a})}(),define("templates/zyList",["templates/template"],function(a){return a("templates/template")("zyList",function(a,b){try{var c=this,d=(c.$helpers,0),e=c.$each,f=a.list,g=(a.media,a.index,a.current),h=c.$escape,i="";return i+='<div class="zongyi_list"> ',d=2,e(f,function(a){i+=' <div class="list_item zongyi_list_item',d=3,g==a.tv.episode&&(i+=" highlight",d=3),i+='" data-episode="',d=3,i+=h(a.tv.episode),i+='"> <a data-vname="',d=4,i+=h(a.tv.name),i+='" data-sname="',d=4,i+=h(a.site_name),i+='" data-hash="',d=4,i+=h(a.hash),i+='" data-eindex="',d=4,i+=h(a.tv.episode),i+='" class="touch-link episode" href="',d=4,i+=h(a.url),i+='"> <div class="icon"> <img src="',d=6,i+=h(a.tv.screenshot),i+='" /> </div> <div class="info"> <div class="name">',d=9,i+=h(a.tv.name),i+='</div> <div class="summary">',d=10,i+=h(a.tv.episode),i+="</div> </div> </a> </div> ",d=14}),i+=" </div>",new String(i)}catch(j){throw{filename:b,name:"Render Error",message:j.message,line:d,source:'<div class="zongyi_list">\n{{each list as media index}}\n<div class="list_item zongyi_list_item{{if current==media.tv.episode}} highlight{{/if}}" data-episode="{{media.tv.episode}}">\n	<a data-vname="{{media.tv.name}}" data-sname="{{media.site_name}}" data-hash="{{media.hash}}" data-eindex="{{media.tv.episode}}" class="touch-link episode" href="{{media.url}}">\n    <div class="icon">\n    	<img src="{{media.tv.screenshot}}" />\n    </div>\n    <div class="info">\n        <div class="name">{{media.tv.name}}</div>\n        <div class="summary">{{media.tv.episode}}</div>\n    </div>\n    </a>\n</div>\n{{/each}}\n</div>'.split(/\n/)[d-1].replace(/^\s+/,"")}}})}),define("utils/localStorage",["config"],function(a){var b=(a("config"),function(a){for(var b=localStorage.preData?JSON.parse(localStorage.preData):[],c=0,d=0;d<b.length;d++)if(b[d].videoId==a.videoId)return void(c=1);0==c&&(b.length>19&&b.shift(),b.push(a),localStorage.preData=JSON.stringify(b))}),c=function(a){var b=localStorage.preData?JSON.parse(localStorage.preData):"";if(b.length>0)for(var c=0;c<b.length;c++)if(b[c].videoId==a)return b[c]};return{set:b,get:c}}),define("views/loading",["plugins/spin"],function(a){var b,c,d=a("plugins/spin"),e={lines:11,length:4,width:3,radius:8,corners:1,rotate:0,direction:1,color:"#999",speed:1,trail:60},f=function(){return b=new d(e).spin(),c=$('<div class="loader"></div>'),c.append(b.el)},g=function(){return c.html('<div class="allItemsLoaded"></div>'),c},h=function(){$(".loader").length>0&&(b.spin(),c.remove())};return{init:f,hide:h,complete:g}}),function(a,b){"object"==typeof exports?module.exports=b():"function"==typeof define?define("plugins/spin",[],b):"function"==typeof define&&define.amd?define("plugins/spin",[],b):a.Spinner=b()}(this,function(){"use strict";function a(a,b){var c,d=document.createElement(a||"div");for(c in b)d[c]=b[c];return d}function b(a){for(var b=1,c=arguments.length;c>b;b++)a.appendChild(arguments[b]);return a}function c(a,b,c,d){var e=["opacity",b,~~(100*a),c,d].join("-"),f=.01+c/d*100,g=Math.max(1-(1-a)/b*(100-f),a),h=j.substring(0,j.indexOf("Animation")).toLowerCase(),i=h&&"-"+h+"-"||"";return l[e]||(m.insertRule("@"+i+"keyframes "+e+"{0%{opacity:"+g+"}"+f+"%{opacity:"+a+"}"+(f+.01)+"%{opacity:1}"+(f+b)%100+"%{opacity:"+a+"}100%{opacity:"+g+"}}",m.cssRules.length),l[e]=1),e}function d(a,b){var c,d,e=a.style;for(b=b.charAt(0).toUpperCase()+b.slice(1),d=0;d<k.length;d++)if(c=k[d]+b,void 0!==e[c])return c;return void 0!==e[b]?b:void 0}function e(a,b){for(var c in b)a.style[d(a,c)||c]=b[c];return a}function f(a){for(var b=1;b<arguments.length;b++){var c=arguments[b];for(var d in c)void 0===a[d]&&(a[d]=c[d])}return a}function g(a,b){return"string"==typeof a?a:a[b%a.length]}function h(a){this.opts=f(a||{},h.defaults,n)}function i(){function c(b,c){return a("<"+b+' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">',c)}m.addRule(".spin-vml","behavior:url(#default#VML)"),h.prototype.lines=function(a,d){function f(){return e(c("group",{coordsize:k+" "+k,coordorigin:-j+" "+-j}),{width:k,height:k})}function h(a,h,i){b(m,b(e(f(),{rotation:360/d.lines*a+"deg",left:~~h}),b(e(c("roundrect",{arcsize:d.corners}),{width:j,height:d.width,left:d.radius,top:-d.width>>1,filter:i}),c("fill",{color:g(d.color,a),opacity:d.opacity}),c("stroke",{opacity:0}))))}var i,j=d.length+d.width,k=2*j,l=2*-(d.width+d.length)+"px",m=e(f(),{position:"absolute",top:l,left:l});if(d.shadow)for(i=1;i<=d.lines;i++)h(i,-2,"progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)");for(i=1;i<=d.lines;i++)h(i);return b(a,m)},h.prototype.opacity=function(a,b,c,d){var e=a.firstChild;d=d.shadow&&d.lines||0,e&&b+d<e.childNodes.length&&(e=e.childNodes[b+d],e=e&&e.firstChild,e=e&&e.firstChild,e&&(e.opacity=c))}}var j,k=["webkit","Moz","ms","O"],l={},m=function(){var c=a("style",{type:"text/css"});return b(document.getElementsByTagName("head")[0],c),c.sheet||c.styleSheet}(),n={lines:12,length:7,width:5,radius:10,rotate:0,corners:1,color:"#000",direction:1,speed:1,trail:100,opacity:.25,fps:20,zIndex:2e9,className:"spinner",top:"50%",left:"50%",position:"absolute"};h.defaults={},f(h.prototype,{spin:function(b){this.stop();{var c=this,d=c.opts,f=c.el=e(a(0,{className:d.className}),{position:d.position,width:0,zIndex:d.zIndex});d.radius+d.length+d.width}if(e(f,{left:d.left,top:d.top}),b&&b.insertBefore(f,b.firstChild||null),f.setAttribute("role","progressbar"),c.lines(f,c.opts),!j){var g,h=0,i=(d.lines-1)*(1-d.direction)/2,k=d.fps,l=k/d.speed,m=(1-d.opacity)/(l*d.trail/100),n=l/d.lines;!function o(){h++;for(var a=0;a<d.lines;a++)g=Math.max(1-(h+(d.lines-a)*n)%l*m,d.opacity),c.opacity(f,a*d.direction+i,g,d);c.timeout=c.el&&setTimeout(o,~~(1e3/k))}()}return c},stop:function(){var a=this.el;return a&&(clearTimeout(this.timeout),a.parentNode&&a.parentNode.removeChild(a),this.el=void 0),this},lines:function(d,f){function h(b,c){return e(a(),{position:"absolute",width:f.length+f.width+"px",height:f.width+"px",background:b,boxShadow:c,transformOrigin:"left",transform:"rotate("+~~(360/f.lines*k+f.rotate)+"deg) translate("+f.radius+"px,0)",borderRadius:(f.corners*f.width>>1)+"px"})}for(var i,k=0,l=(f.lines-1)*(1-f.direction)/2;k<f.lines;k++)i=e(a(),{position:"absolute",top:1+~(f.width/2)+"px",transform:f.hwaccel?"translate3d(0,0,0)":"",opacity:f.opacity,animation:j&&c(f.opacity,f.trail,l+k*f.direction,f.lines)+" "+1/f.speed+"s linear infinite"}),f.shadow&&b(i,e(h("#000","0 0 4px #000"),{top:"2px"})),b(d,b(i,h(g(f.color,k),"0 0 1px rgba(0,0,0,.1)")));return d},opacity:function(a,b,c){b<a.childNodes.length&&(a.childNodes[b].style.opacity=c)}});var o=e(a("group"),{behavior:"url(#default#VML)"});return!d(o,"transform")&&o.adj?i():j=d(o,"animation"),h}),define("templates/recommendVideo",["templates/template"],function(a){return a("templates/template")("recommendVideo",function(a,b){try{var c=this,d=(c.$helpers,0),e=c.$each,f=(a.item,a.index,c.$escape),g="";return d=1,e(a,function(a){g+='<a data-type="recommend" class="video-item" href="javascript:void(0);" data-video-id="',d=1,g+=f(a.video_id),g+='" data-name="',d=1,g+=f(a.name),g+='" data-cover="',d=1,a.icon&&(d=1,g+=f(a.icon.s75),d=1),g+='" data-score="',d=1,g+=f(a.douban.score),g+='" data-year="',d=1,g+=f(a.year),g+='" data-runtime="',d=1,g+=f(a.runtime),g+='"> <div class="cover"> <img src="',d=3,a.icon&&(d=3,g+=f(a.icon.s75),d=3),g+='"> <div class="info">',d=4,g+=f(a.douban.score),g+='分</div> </div> <div class="title">',d=6,g+=f(a.name),g+="</div> </a>",d=7}),new String(g)}catch(h){throw{filename:b,name:"Render Error",message:h.message,line:d,source:'{{each $data as item index}}<a data-type="recommend" class="video-item" href="javascript:void(0);" data-video-id="{{item.video_id}}" data-name="{{item.name}}" data-cover="{{if item.icon}}{{item.icon.s75}}{{/if}}" data-score="{{item.douban.score}}" data-year="{{item.year}}" data-runtime="{{item.runtime}}">\n    <div class="cover">\n        <img src="{{if item.icon}}{{item.icon.s75}}{{/if}}">\n        <div class="info">{{item.douban.score}}分</div>\n    </div>    \n    <div class="title">{{item.name}}</div>\n</a>{{/each}}'.split(/\n/)[d-1].replace(/^\s+/,"")}}})}),define("templates/videoSeries",["templates/template"],function(a){return a("templates/template")("videoSeries",function(a,b){try{var c=this,d=(c.$helpers,0),e=c.$each,f=(a.item,a.index,c.$escape),g="";return d=1,e(a,function(a){g+='<a data-type="series" class="video-item" href="javascript:void(0);" data-video-id="',d=1,g+=f(a.video_id),g+='" data-name="',d=1,g+=f(a.name),g+='" data-cover="',d=1,a.icon&&(d=1,g+=f(a.icon.s75),d=1),g+='" data-score="',d=1,g+=f(a.douban.score),g+='" data-year="',d=1,g+=f(a.year),g+='" data-runtime="',d=1,g+=f(a.runtime),g+='"> <div class="cover"> <img src="',d=3,a.icon&&(d=3,g+=f(a.icon.s75),d=3),g+='"> <div class="info">',d=4,g+=f(a.douban.score),g+='分</div> </div> <div class="title">',d=6,g+=f(a.name),g+="</div> </a>",d=7}),new String(g)}catch(h){throw{filename:b,name:"Render Error",message:h.message,line:d,source:'{{each $data as item index}}<a data-type="series" class="video-item" href="javascript:void(0);" data-video-id="{{item.video_id}}" data-name="{{item.name}}" data-cover="{{if item.icon}}{{item.icon.s75}}{{/if}}" data-score="{{item.douban.score}}" data-year="{{item.year}}" data-runtime="{{item.runtime}}">\n    <div class="cover">\n        <img src="{{if item.icon}}{{item.icon.s75}}{{/if}}">\n        <div class="info">{{item.douban.score}}分</div>\n    </div>    \n    <div class="title">{{item.name}}</div>\n</a>{{/each}}'.split(/\n/)[d-1].replace(/^\s+/,"")}}})}),define("utils/global",["config","plugins/cookie"],function(a){var b=a("config");a("plugins/cookie");var c="unknown";"unknown"==c&&"iPad"==$.cookie("xy_d_model")&&(c="iPad"),"unknown"==c&&"iPhone"==$.cookie("xy_d_model")&&(c="iPhone"),console.log("device type: %s",c);var d=$.cookie("xy_s_version");console.log("system version: %s",d);var e={deviceType:c,systemVersion:d},f=parseFloat($.cookie("xy_a_version")),g={appVersion:f,deviceInfo:e};return window[b.appUAPrefix]={},window[b.appUAPrefix].appInfo=g,window[b.appUAPrefix].deviceInfo=e,window[b.appUAPrefix]}),define("utils/pageBannerSet",["config","plugins/cookie"],function(a){a("config");a("plugins/cookie");var b=function(){$("body").append('<script type="text/javascript" id="gdt-1040009171100119"></script>'),window.TencentGDT=window.TencentGDT||[],TencentGDT.push({posid:"1040009171100119",type:"banner",filltype:"full",appid:"1104067950"});var a=document,b=a.getElementsByTagName("head")[0],c=a.createElement("script");c.async=!0,c.src="http://qzs.qq.com/qzone/biz/res/i.js",b&&b.insertBefore(c,b.firstChild)},c=function(a){var b=60,c=$.cookie("xy_d_model");c&&c.indexOf("iPad")>=0&&(b=120),$("body").bind("DOMNodeInserted",function(){$("#gdt_banner_popup_wrap").length>0&&($("body").unbind("DOMNodeInserted"),setTimeout(function(){"bottom"==a&&($(".pageView").css({"padding-bottom":b,"box-sizing":"border-box"}),$("#gdt_banner_popup_wrap").css({position:"fixed","z-index":"5"}))},1e3))})};return{initBanner:b,setBanner:c}}),define("utils/supportedApps",["plugins/cookie","utils/jsToOC","config"],function(a,b){a("plugins/cookie");var c=a("utils/jsToOC"),d=a("config"),e="http://um0.cn/OkcYP",f="http://um0.cn/2YILgk",g=[{scheme:"qisi-miaowu",category:"dongman",shouldOpen:!1,device:"iPhone",appName:"喵呜动漫",url:d.appScheme+"open/safari?url="+e},{scheme:"qisi-zongyi",category:"zongyi",shouldOpen:!1,device:"iPhone,iPad",appName:"综艺大爆炸",url:d.appScheme+"open/safari?url="+f}];b.formatPlayUrl=function(a,b){for(item in g)if(g[item].shouldOpen){var c=a.match(/^.*(?=:\/\/)/);if(c&&c.length){var d=c[0];a=a.replace(d,g[item].scheme),b.text("去《"+g[item].appName+"》内播放")}break}return a},b.checkSupported=function(a){for(item in g)if(!g[item].shouldOpen&&g[item].category==a){var b=$.cookie("xy_d_model");g[item].device.indexOf(b)>=0&&c.send("canopenurl?url="+g[item].scheme+"://")}},b.markSupported=function(a,b,c){var e=a.replace("://",""),f="";if(b)for(item in g)g[item].scheme==e&&(g[item].shouldOpen=!0);else for(item in g)if(g[item].scheme==e){var f=['<div class="goto-apps">','<a href="'+g[item].url+'">','<img src="'+d.staticPath+"/images/banner/"+e+'.jpg">',"</a>","</div>"].join("");break}c(f)}}),!function(a,b,c){"use strict";!function d(a,b,c){function e(g,h){if(!b[g]){if(!a[g]){var i="function"==typeof require&&require;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=b[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,d,a,b,c)}return b[g].exports}for(var f="function"==typeof require&&require,g=0;g<c.length;g++)e(c[g]);return e}({1:[function(d){var e,f,g,h,i=function(a){return a&&a.__esModule?a:{"default":a}},j=d("./modules/handle-dom"),k=d("./modules/utils"),l=d("./modules/handle-swal-dom"),m=d("./modules/handle-click"),n=d("./modules/handle-key"),o=i(n),p=d("./modules/default-params"),q=i(p),r=d("./modules/set-params"),s=i(r);g=h=function(){function d(a){var b=g;return b[a]===c?q["default"][a]:b[a]}var g=arguments[0];if(j.addClass(b.body,"stop-scrolling"),l.resetInput(),g===c)return k.logStr("SweetAlert expects at least 1 attribute!"),!1;var h=k.extend({},q["default"]);switch(typeof g){case"string":h.title=g,h.text=arguments[1]||"",h.type=arguments[2]||"";break;case"object":if(g.title===c)return k.logStr('Missing "title" argument!'),!1;h.title=g.title;for(var i in q["default"])h[i]=d(i);h.confirmButtonText=h.showCancelButton?"Confirm":q["default"].confirmButtonText,h.confirmButtonText=d("confirmButtonText"),h.doneFunction=arguments[1]||null;break;default:return k.logStr('Unexpected type of argument! Expected "string" or "object", got '+typeof g),!1}s["default"](h),l.fixVerticalPosition(),l.openModal(arguments[1]);for(var n=l.getModal(),p=n.querySelectorAll("button"),r=["onclick","onmouseover","onmouseout","onmousedown","onmouseup","onfocus"],t=function(a){return m.handleButton(a,h,n)},u=0;u<p.length;u++)for(var v=0;v<r.length;v++){var w=r[v];p[u][w]=t}l.getOverlay().onclick=t,e=a.onkeydown;var x=function(a){return o["default"](a,h,n)};a.onkeydown=x,a.onfocus=function(){setTimeout(function(){f!==c&&(f.focus(),f=c)},0)}},g.setDefaults=h.setDefaults=function(a){if(!a)throw new Error("userParams is required");if("object"!=typeof a)throw new Error("userParams has to be a object");k.extend(q["default"],a)},g.close=h.close=function(){var d=l.getModal();j.fadeOut(l.getOverlay(),5),j.fadeOut(d,5),j.removeClass(d,"showSweetAlert"),j.addClass(d,"hideSweetAlert"),j.removeClass(d,"visible");var g=d.querySelector(".sa-icon.sa-success");j.removeClass(g,"animate"),j.removeClass(g.querySelector(".sa-tip"),"animateSuccessTip"),j.removeClass(g.querySelector(".sa-long"),"animateSuccessLong");var h=d.querySelector(".sa-icon.sa-error");j.removeClass(h,"animateErrorIcon"),j.removeClass(h.querySelector(".sa-x-mark"),"animateXMark");var i=d.querySelector(".sa-icon.sa-warning");return j.removeClass(i,"pulseWarning"),j.removeClass(i.querySelector(".sa-body"),"pulseWarningIns"),j.removeClass(i.querySelector(".sa-dot"),"pulseWarningIns"),setTimeout(function(){var a=d.getAttribute("data-custom-class");j.removeClass(d,a)},300),j.removeClass(b.body,"stop-scrolling"),a.onkeydown=e,a.previousActiveElement&&a.previousActiveElement.focus(),f=c,clearTimeout(d.timeout),!0},g.showInputError=h.showInputError=function(a){var b=l.getModal(),c=b.querySelector(".sa-input-error");j.addClass(c,"show");var d=b.querySelector(".sa-error-container");j.addClass(d,"show"),d.querySelector("p").innerHTML=a,b.querySelector("input").focus()},g.resetInputError=h.resetInputError=function(a){if(a&&13===a.keyCode)return!1;var b=l.getModal(),c=b.querySelector(".sa-input-error");j.removeClass(c,"show");var d=b.querySelector(".sa-error-container");j.removeClass(d,"show")},"undefined"!=typeof a?a.sweetAlert=a.swal=g:k.logStr("SweetAlert is a frontend module!")},{"./modules/default-params":2,"./modules/handle-click":3,"./modules/handle-dom":4,"./modules/handle-key":5,"./modules/handle-swal-dom":6,"./modules/set-params":8,"./modules/utils":9}],2:[function(a,b,c){Object.defineProperty(c,"__esModule",{value:!0});var d={title:"",text:"",type:null,allowOutsideClick:!1,showConfirmButton:!0,showCancelButton:!1,closeOnConfirm:!0,closeOnCancel:!0,confirmButtonText:"OK",confirmButtonColor:"#AEDEF4",cancelButtonText:"Cancel",imageUrl:null,imageSize:null,timer:null,customClass:"",html:!1,animation:!0,allowEscapeKey:!0,inputType:"text",inputPlaceholder:"",inputValue:""};c["default"]=d,b.exports=c["default"]},{}],3:[function(b,c,d){Object.defineProperty(d,"__esModule",{value:!0});var e=b("./utils"),f=(b("./handle-swal-dom"),b("./handle-dom")),g=function(b,c,d){function g(a){o&&c.confirmButtonColor&&(n.style.backgroundColor=a)}var j,k,l,m=b||a.event,n=m.target||m.srcElement,o=-1!==n.className.indexOf("confirm"),p=-1!==n.className.indexOf("sweet-overlay"),q=f.hasClass(d,"visible"),r=c.doneFunction&&"true"===d.getAttribute("data-has-done-function");switch(o&&c.confirmButtonColor&&(j=c.confirmButtonColor,k=e.colorLuminance(j,-.04),l=e.colorLuminance(j,-.14)),m.type){case"mouseover":g(k);break;case"mouseout":g(j);break;case"mousedown":g(l);break;case"mouseup":g(k);break;case"focus":var s=d.querySelector("button.confirm"),t=d.querySelector("button.cancel");o?t.style.boxShadow="none":s.style.boxShadow="none";break;case"click":var u=d===n,v=f.isDescendant(d,n);if(!u&&!v&&q&&!c.allowOutsideClick)break;o&&r&&q?h(d,c):r&&q||p?i(d,c):f.isDescendant(d,n)&&"BUTTON"===n.tagName&&sweetAlert.close()}},h=function(a,b){var c=!0;f.hasClass(a,"show-input")&&(c=a.querySelector("input").value,c||(c="")),b.doneFunction(c),b.closeOnConfirm&&sweetAlert.close()},i=function(a,b){var c=String(b.doneFunction).replace(/\s/g,""),d="function("===c.substring(0,9)&&")"!==c.substring(9,10);d&&b.doneFunction(!1),b.closeOnCancel&&sweetAlert.close()};d["default"]={handleButton:g,handleConfirm:h,handleCancel:i},c.exports=d["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],4:[function(c,d,e){Object.defineProperty(e,"__esModule",{value:!0});var f=function(a,b){return new RegExp(" "+b+" ").test(" "+a.className+" ")},g=function(a,b){f(a,b)||(a.className+=" "+b)},h=function(a,b){var c=" "+a.className.replace(/[\t\r\n]/g," ")+" ";if(f(a,b)){for(;c.indexOf(" "+b+" ")>=0;)c=c.replace(" "+b+" "," ");a.className=c.replace(/^\s+|\s+$/g,"")}},i=function(a){var c=b.createElement("div");return c.appendChild(b.createTextNode(a)),c.innerHTML},j=function(a){a.style.opacity="",a.style.display="block"},k=function(a){if(a&&!a.length)return j(a);for(var b=0;b<a.length;++b)j(a[b])},l=function(a){a.style.opacity="",a.style.display="none"},m=function(a){if(a&&!a.length)return l(a);for(var b=0;b<a.length;++b)l(a[b])},n=function(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1},o=function(a){a.style.left="-9999px",a.style.display="block";var b,c=a.clientHeight;return b="undefined"!=typeof getComputedStyle?parseInt(getComputedStyle(a).getPropertyValue("padding-top"),10):parseInt(a.currentStyle.padding),a.style.left="",a.style.display="none","-"+parseInt((c+b)/2)+"px"},p=function(a,b){if(+a.style.opacity<1){b=b||16,a.style.opacity=0,a.style.display="block";var c=+new Date,d=function(a){function b(){return a.apply(this,arguments)}return b.toString=function(){return a.toString()},b}(function(){a.style.opacity=+a.style.opacity+(new Date-c)/100,c=+new Date,+a.style.opacity<1&&setTimeout(d,b)});d()}a.style.display="block"},q=function(a,b){b=b||16,a.style.opacity=1;var c=+new Date,d=function(a){function b(){return a.apply(this,arguments)}return b.toString=function(){return a.toString()},b}(function(){a.style.opacity=+a.style.opacity-(new Date-c)/100,c=+new Date,+a.style.opacity>0?setTimeout(d,b):a.style.display="none"});d()},r=function(c){if("function"==typeof MouseEvent){var d=new MouseEvent("click",{view:a,bubbles:!1,cancelable:!0});c.dispatchEvent(d)}else if(b.createEvent){var e=b.createEvent("MouseEvents");e.initEvent("click",!1,!1),c.dispatchEvent(e)}else b.createEventObject?c.fireEvent("onclick"):"function"==typeof c.onclick&&c.onclick()},s=function(b){"function"==typeof b.stopPropagation?(b.stopPropagation(),b.preventDefault()):a.event&&a.event.hasOwnProperty("cancelBubble")&&(a.event.cancelBubble=!0)};e.hasClass=f,e.addClass=g,e.removeClass=h,e.escapeHtml=i,e._show=j,e.show=k,e._hide=l,e.hide=m,e.isDescendant=n,e.getTopMargin=o,e.fadeIn=p,e.fadeOut=q,e.fireClick=r,e.stopEventPropagation=s},{}],5:[function(b,d,e){Object.defineProperty(e,"__esModule",{value:!0});var f=b("./handle-dom"),g=b("./handle-swal-dom"),h=function(b,d,e){var h=b||a.event,i=h.keyCode||h.which,j=e.querySelector("button.confirm"),k=e.querySelector("button.cancel"),l=e.querySelectorAll("button[tabindex]");if(-1!==[9,13,32,27].indexOf(i)){for(var m=h.target||h.srcElement,n=-1,o=0;o<l.length;o++)if(m===l[o]){n=o;break}9===i?(m=-1===n?j:n===l.length-1?l[0]:l[n+1],f.stopEventPropagation(h),m.focus(),d.confirmButtonColor&&g.setFocusStyle(m,d.confirmButtonColor)):13===i?("INPUT"===m.tagName&&(m=j,j.focus()),m=-1===n?j:c):27===i&&d.allowEscapeKey===!0?(m=k,f.fireClick(m,h)):m=c}};e["default"]=h,d.exports=e["default"]},{"./handle-dom":4,"./handle-swal-dom":6}],6:[function(c,d,e){var f=function(a){return a&&a.__esModule?a:{"default":a}};Object.defineProperty(e,"__esModule",{value:!0});var g=c("./utils"),h=c("./handle-dom"),i=c("./default-params"),j=f(i),k=c("./injected-html"),l=f(k),m=".sweet-alert",n=".sweet-overlay",o=function(){var a=b.createElement("div");for(a.innerHTML=l["default"];a.firstChild;)b.body.appendChild(a.firstChild)},p=function(a){function b(){return a.apply(this,arguments)}return b.toString=function(){return a.toString()},b}(function(){var a=b.querySelector(m);return a||(o(),a=p()),a}),q=function(){var a=p();return a?a.querySelector("input"):void 0},r=function(){return b.querySelector(n)},s=function(a,b){var c=g.hexToRgb(b);a.style.boxShadow="0 0 2px rgba("+c+", 0.8), inset 0 0 0 1px rgba(0, 0, 0, 0.05)"},t=function(c){var d=p();h.fadeIn(r(),10),h.show(d),h.addClass(d,"showSweetAlert"),h.removeClass(d,"hideSweetAlert"),a.previousActiveElement=b.activeElement;var e=d.querySelector("button.confirm");e.focus(),setTimeout(function(){h.addClass(d,"visible")},500);var f=d.getAttribute("data-timer");if("null"!==f&&""!==f){var g=c;d.timeout=setTimeout(function(){var a=(g||null)&&"true"===d.getAttribute("data-has-done-function");a?g(null):sweetAlert.close()},f)}},u=function(){var a=p(),b=q();h.removeClass(a,"show-input"),b.value=j["default"].inputValue,b.setAttribute("type",j["default"].inputType),b.setAttribute("placeholder",j["default"].inputPlaceholder),v()},v=function(a){if(a&&13===a.keyCode)return!1;var b=p(),c=b.querySelector(".sa-input-error");h.removeClass(c,"show");var d=b.querySelector(".sa-error-container");h.removeClass(d,"show")},w=function(){var a=p();a.style.marginTop=h.getTopMargin(p())};e.sweetAlertInitialize=o,e.getModal=p,e.getOverlay=r,e.getInput=q,e.setFocusStyle=s,e.openModal=t,e.resetInput=u,e.resetInputError=v,e.fixVerticalPosition=w},{"./default-params":2,"./handle-dom":4,"./injected-html":7,"./utils":9}],7:[function(a,b,c){Object.defineProperty(c,"__esModule",{value:!0});var d='<div class="sweet-overlay" tabIndex="-1"></div><div class="sweet-alert"><div class="sa-icon sa-error">\n      <span class="sa-x-mark">\n        <span class="sa-line sa-left"></span>\n        <span class="sa-line sa-right"></span>\n      </span>\n    </div><div class="sa-icon sa-warning">\n      <span class="sa-body"></span>\n      <span class="sa-dot"></span>\n    </div><div class="sa-icon sa-info"></div><div class="sa-icon sa-success">\n      <span class="sa-line sa-tip"></span>\n      <span class="sa-line sa-long"></span>\n\n      <div class="sa-placeholder"></div>\n      <div class="sa-fix"></div>\n    </div><div class="sa-icon sa-custom"></div><h2>Title</h2>\n    <p>Text</p>\n    <fieldset>\n      <input type="text" tabIndex="3" />\n      <div class="sa-input-error"></div>\n    </fieldset><div class="sa-error-container">\n      <div class="icon">!</div>\n      <p>Not valid!</p>\n    </div><div class="sa-button-container">\n      <button class="cancel" tabIndex="2">Cancel</button>\n      <button class="confirm" tabIndex="1">OK</button>\n    </div></div>';c["default"]=d,b.exports=c["default"]},{}],8:[function(a,b,d){Object.defineProperty(d,"__esModule",{value:!0});var e=a("./utils"),f=a("./handle-swal-dom"),g=a("./handle-dom"),h=["error","warning","info","success","input","prompt"],i=function(a){var b=f.getModal(),d=b.querySelector("h2"),i=b.querySelector("p"),j=b.querySelector("button.cancel"),k=b.querySelector("button.confirm");if(d.innerHTML=a.html?a.title:g.escapeHtml(a.title).split("\n").join("<br>"),i.innerHTML=a.html?a.text:g.escapeHtml(a.text||"").split("\n").join("<br>"),a.text&&g.show(i),a.customClass)g.addClass(b,a.customClass),b.setAttribute("data-custom-class",a.customClass);else{var l=b.getAttribute("data-custom-class");g.removeClass(b,l),b.setAttribute("data-custom-class","")}if(g.hide(b.querySelectorAll(".sa-icon")),a.type&&!e.isIE8()){var m=function(){for(var d=!1,e=0;e<h.length;e++)if(a.type===h[e]){d=!0;break}if(!d)return logStr("Unknown alert type: "+a.type),{v:!1};var i=["success","error","warning","info"],j=c;-1!==i.indexOf(a.type)&&(j=b.querySelector(".sa-icon.sa-"+a.type),g.show(j));var k=f.getInput();switch(a.type){case"success":g.addClass(j,"animate"),g.addClass(j.querySelector(".sa-tip"),"animateSuccessTip"),g.addClass(j.querySelector(".sa-long"),"animateSuccessLong");break;case"error":g.addClass(j,"animateErrorIcon"),g.addClass(j.querySelector(".sa-x-mark"),"animateXMark");break;case"warning":g.addClass(j,"pulseWarning"),g.addClass(j.querySelector(".sa-body"),"pulseWarningIns"),g.addClass(j.querySelector(".sa-dot"),"pulseWarningIns");break;case"input":case"prompt":k.setAttribute("type",a.inputType),k.value=a.inputValue,k.setAttribute("placeholder",a.inputPlaceholder),g.addClass(b,"show-input"),setTimeout(function(){k.focus(),k.addEventListener("keyup",swal.resetInputError)},400)}}();if("object"==typeof m)return m.v}if(a.imageUrl){var n=b.querySelector(".sa-icon.sa-custom");n.style.backgroundImage="url("+a.imageUrl+")",g.show(n);var o=80,p=80;if(a.imageSize){var q=a.imageSize.toString().split("x"),r=q[0],s=q[1];r&&s?(o=r,p=s):logStr("Parameter imageSize expects value with format WIDTHxHEIGHT, got "+a.imageSize)}n.setAttribute("style",n.getAttribute("style")+"width:"+o+"px; height:"+p+"px")}b.setAttribute("data-has-cancel-button",a.showCancelButton),a.showCancelButton?j.style.display="inline-block":g.hide(j),b.setAttribute("data-has-confirm-button",a.showConfirmButton),a.showConfirmButton?k.style.display="inline-block":g.hide(k),a.cancelButtonText&&(j.innerHTML=g.escapeHtml(a.cancelButtonText)),a.confirmButtonText&&(k.innerHTML=g.escapeHtml(a.confirmButtonText)),a.confirmButtonColor&&(k.style.backgroundColor=a.confirmButtonColor,f.setFocusStyle(k,a.confirmButtonColor)),b.setAttribute("data-allow-outside-click",a.allowOutsideClick);var t=a.doneFunction?!0:!1;b.setAttribute("data-has-done-function",t),a.animation?"string"==typeof a.animation?b.setAttribute("data-animation",a.animation):b.setAttribute("data-animation","pop"):b.setAttribute("data-animation","none"),b.setAttribute("data-timer",a.timer)};d["default"]=i,b.exports=d["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],9:[function(b,c,d){Object.defineProperty(d,"__esModule",{value:!0});var e=function(a,b){for(var c in b)b.hasOwnProperty(c)&&(a[c]=b[c]);return a},f=function(a){var b=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(a);return b?parseInt(b[1],16)+", "+parseInt(b[2],16)+", "+parseInt(b[3],16):null},g=function(){return a.attachEvent&&!a.addEventListener},h=function(b){a.console&&a.console.log("SweetAlert: "+b)},i=function(a,b){a=String(a).replace(/[^0-9a-f]/gi,""),a.length<6&&(a=a[0]+a[0]+a[1]+a[1]+a[2]+a[2]),b=b||0;var c,d,e="#";for(d=0;3>d;d++)c=parseInt(a.substr(2*d,2),16),c=Math.round(Math.min(Math.max(0,c+c*b),255)).toString(16),e+=("00"+c).substr(c.length);return e};d.extend=e,d.hexToRgb=f,d.isIE8=g,d.logStr=h,d.colorLuminance=i},{}]},{},[1]),"function"==typeof define?define("plugins/sweetalert",[],function(){return sweetAlert}):"undefined"!=typeof module&&module.exports&&(module.exports=sweetAlert)}(window,document);
+define(function (require, exports) {
+
+    var appConfig = require('../config')
+        , jsToOC = require('../utils/jsToOC')
+        , getUrlParam = require('../utils/getUrlParam')
+        , OpenPage = require('../utils/openPage')
+        , renderDetail = require('../templates/detail')
+        , renderZY = require('../templates/zyList')
+        , localStore = require('../utils/localStorage')
+        , loading = require('../views/loading')
+        , renderRecommend = require('../templates/recommendVideo')
+        , renderSeries = require('../templates/videoSeries')
+        , pageInfo = require('../utils/global')
+        , debugMode = getUrlParam('debug')
+        , pageBannerSet = require('../utils/pageBannerSet')
+        , supportedApps = require('../utils/supportedApps')
+        , sweetAlert = require('../plugins/sweetalert')
+
+    require('../plugins/cookie');
+        
+
+    var CardedList = {};
+
+    var RangedList = {};
+
+    var VideoInfo = {};
+
+    var $card = $('.pageView');
+
+    var appVersion = parseFloat($.cookie('xy_a_version'));
+
+    var cookieDevice = $.cookie('xy_d_model');
+
+    var appDevice = pageInfo.appInfo.deviceInfo.deviceType;
+
+    var downloadTarget;
+
+    var seriesID,
+        seriesInfo;
+
+    // var appDevice = 'iPad';
+
+    var nativeCount = 1;
+
+    if (appDevice == 'iPad'){
+
+        nativeCount = 2;
+
+    }
+
+    var nativeAdOption = {
+            "type": "gdt",
+            "count": nativeCount,
+            "key": {
+                "publisher": "1103603602",
+                "placement": "9070500587785286"
+            }
+        };
+
+    //appDidLoadNativeAd
+    pageInfo.appDidLoadNativeAd = function (data) {
+
+        console.log('appDidLoadNativeAd');
+
+        // console.log(JSON.parse(data));
+
+        var adData = JSON.parse(data);
+
+        if (appDevice == 'iPad' && adData.length == nativeCount){
+
+            $card.append('<div class="native-ad-con clearfix"></div>');
+
+        }
+
+        for (var i = 0;i < adData.length;i ++){
+
+            var adTitle = adData[i].title,
+                adIndex = adData[i].index,
+                adImg = adData[i].img,
+                adIcon = adData[i].icon,
+                adDesc = adData[i].desc,
+                adTpl = ['<div class="native-ad"><a data-href="nativeadclick?index=' + adIndex + '" class="native-ad-link">',
+                            '<img src="' + adImg + '">',
+                            // '<span class="close"></span>',
+                            '<div class="title-con">',
+                                '<span class="ad-icon">广告</span>',
+                                '<span class="title">' + adTitle + '</span>',
+                                '<span class="caption">' + adDesc + '</span>',
+                            '</div>',
+                            '<div class="ad-notice"></div>',
+                        '</a>',
+                        // '<span class="close"></span>',
+                        '</div>'].join('');
+
+            if (appDevice == 'iPad'){
+
+                if (adData.length == nativeCount){
+
+                    $('.native-ad-con').append(adTpl);
+
+                }
+
+            }
+            else{
+
+                $card.append(adTpl);
+
+            }
+
+            jsToOC.send('nativeadrender?index=' + adIndex);
+
+        }
+
+        //点击广告
+        $card.on(appConfig.clickEvent, '.native-ad-link', function () {
+
+            var thiz = $(this);
+
+            var thizHref = thiz.data('href');
+
+            console.log(thizHref);
+
+            jsToOC.send(thizHref);            
+
+        });
+
+        //点击关闭
+        $card.on(appConfig.clickEvent, '.native-ad .close', function (e) {
+
+            $(this).parents('.native-ad').remove();
+
+        });
+
+    }
+
+    //get native ad
+    function getNativeAd () {
+
+        jsToOC.send('getnativead?o=' + encodeURIComponent(JSON.stringify(nativeAdOption)));
+
+    }
+
+    var originTop = 0,
+        followLock = 0,
+        scrollInterval = null,
+        isSubcribed = 0,
+        recoType,
+        recoId,
+        pageName = getUrlParam('video_name'),
+        pageId = getUrlParam('video_id'),
+        viewedLock = 0,
+        viewedTimer = null;
+
+    console.log(getUrlParam('video_name'));
+
+    console.log(pageName);
+
+    // 获取单个媒体的参数串
+    function getMediaParams (media) {
+
+        var hash = media.hash || '',
+            size = media.play ? media.play.file_size : '',
+            name = media.tv ? media.tv.name : VideoInfo.name,
+            index = media.tv ? media.tv.episode : '';
+
+        var param = hash + '|' + size + '|' + name + '|[' + index + ']';
+
+        return param;
+    }
+
+    //页面重现
+    pageInfo.viewDidReShow = function () {
+
+        console.log('view did reshow');
+
+        var videoID = getUrlParam('video_id');
+
+        jsToOC.send('checkviewed?vid=' + videoID); 
+
+        viewedTimer = setTimeout(function(){
+
+            showViewedProcess();
+            
+        }, 1000);
+
+    }
+
+    //观看进度
+    function showViewedProcess () {
+
+        if (pageInfo.viewedInfo){
+
+            var d = getDuration(pageInfo.viewedInfo.d);
+            var vd = getDuration(pageInfo.viewedInfo.vd);
+
+            var viTpl = '';
+        
+            if (pageInfo.viewedInfo.index){
+
+                viTpl += '上次看到第' + pageInfo.viewedInfo.index + '集 ';
+
+                if (d){
+
+                    viTpl += vd + ' / ' + d; 
+
+                }             
+
+            }else if (d){
+
+                viTpl += '上次看到 ' + vd + ' / ' + d;
+
+            }
+
+            $('.viewedInfo').html(viTpl).css({'visibility': 'visible'});
+
+        }
+
+    }
+
+    //页面即将展现
+    pageInfo.viewWillAppear = function () {
+
+        console.log('view will appear');
+
+    }
+
+    //页面展现完成
+    pageInfo.viewDidAppear = function () {
+
+        console.log('view did appear');
+
+    }
+
+    //页面即将消失
+    pageInfo.viewWillDisappear = function () {
+
+        console.log('view will disappear');
+
+    }
+
+    //页面消失
+    pageInfo.viewDidDisappear = function () {
+
+        console.log('view did disappear');
+
+        viewedLock = 0;
+
+    }
+
+
+    pageInfo.appCanOpenUrl = function (url, canOpen) {
+
+        // 标记检查结果
+        supportedApps.markSupported(url, canOpen, function (bannerHtml) {
+
+            if (bannerHtml && bannerHtml.length) {
+
+                $('.pageView').prepend(bannerHtml);
+            };
+        });
+    }
+
+
+    // 添加下载列表VIEW
+    function addDownloadListView() {
+
+        var list = VideoInfo.mediaInfo.list[VideoInfo.selectedSite],
+            videoInfoDownload = {
+                'videoID': VideoInfo.videoID,
+                'videoName': decodeURIComponent(VideoInfo.name),
+                'videoType': VideoInfo.topCategory,
+                'videoTarget': downloadTarget,
+                'videoOriType': VideoInfo.originCate
+            }
+
+        list.forEach(function (media, index) {
+
+            var params = getMediaParams(media)
+
+            media.name = media.tv ? media.tv.name : VideoInfo.name;
+        });
+
+        localStorage.downloadInfo = JSON.stringify(list);
+        localStorage.downloadVideo = JSON.stringify(videoInfoDownload);
+
+        var downLoadUrl;
+
+        // 读取downloadInfo JSON.parse(localStorage.downloadInfo)
+
+        if (appConfig.isLocal) {
+            downLoadUrl = 'http://10.88.0.111/tonight/server-v3/static/client/src/html/detail.html'
+        }
+        else {
+            downLoadUrl = appConfig.webDomain + '/video/downloads';
+        }
+
+        if (!isNaN(appVersion) && appVersion>3.2){
+            OpenPage({
+                url: downLoadUrl,
+                t:  '缓存',
+                tbh: true,
+                pdr: false,
+                ahl: false
+            });
+        }
+        else{
+            OpenPage({
+                url: downLoadUrl,
+                t:  '缓存',
+                tbh: true,
+                pdr: false
+                // ahl: false
+            });
+        }
+
+    }
+
+    //分享+报告
+    function showMoreSelect() {
+
+        var tpl = ['<div class="more-select-con">',
+                        '<div class="more-select">',
+                            '<div class="arrow"></div>',
+                            // '<a data-type="share" class="more-share" href="javascript:;">分享</a>',
+                            // '<div class="separator-line"></div>',
+                            '<a data-type="report" class="more-report" href="javascript:;">反馈</a>',
+                        '</div>',
+                    '</div>'].join('');
+
+        if ($('.more-select-con').size() > 0){
+
+            $('.more-select-con').remove();
+
+        }else{
+
+            $('body').append(tpl);
+            // $card.append(tpl);
+
+        }
+
+    }
+
+    function moreAction() {
+
+        //点击分享或报告
+        $('body').on(appConfig.clickEvent, '.more-select a', function (e) {
+
+            var thiz = $(this),
+                thizType = thiz.data('type');
+
+            if (thizType == 'share'){
+
+
+
+            }else if (thizType == 'report'){
+
+                report();
+
+            }
+
+        });
+
+        //点击报告编辑
+        $('body').on('touchend', '.report-link', function (e) {
+
+            setTimeout(function(){
+
+                report();
+
+            }, 400);
+
+            e.preventDefault();
+            
+
+        });
+
+        //点击确定或取消
+        $('body').on('touchend', '.btn-con button', function (e) {
+
+            var thiz = $(this),
+                thizType = thiz.data('type');
+
+            if (thizType == 'cancel'){
+
+                $('.report-pop').remove();
+
+                $('.pageView').css('height', 'auto');
+
+                $('body').css('height', 'auto');
+
+                $('html').css('height', 'auto');
+
+            }
+            else if (thizType == 'confirm'){
+
+                var reportType = $('.report-con input:checked').data('type'),
+                    reportWords = $.trim($('.report-con textarea').val()),
+                    reportID = thiz.data('id'),
+                    reportName = thiz.data('name'),
+                    gaReport = '';
+
+                if ($('.report-con input:checked').size()){
+
+                    if (reportType == 'other' && reportWords.length > 0){
+
+                        gaReport = reportType + '_' + reportWords;
+                        
+
+                    }else if (reportType != 'other'){
+
+                        gaReport = reportType;
+
+                    }else{
+
+                        return;
+
+                    }
+
+                    ga('send', 'event', 'Video Detail', 'report', reportName + '_' + reportID + '_' + gaReport);
+
+                    $('.report-pop').remove();
+
+                    $('.pageView').css('height', 'auto');
+
+                    $('body').css('height', 'auto');
+
+                    $('html').css('height', 'auto');
+
+                    sweetAlert({
+                        title: "提交成功",
+                        // text: "Something went wrong!",
+                        timer: 1000,
+                        type: "success",
+                        showConfirmButton: false
+                    });
+
+                }
+
+            }
+
+            e.preventDefault();
+
+        });
+
+        //点击弹窗以外区域
+        $('body').on('touchend', '.report-bg', function (e) {
+
+            $('.report-pop').remove();
+
+            $('.pageView').css('height', 'auto');
+
+            $('body').css('height', 'auto');
+
+            $('html').css('height', 'auto');
+
+            e.preventDefault();
+
+        });
+
+    }
+
+
+
+    //报告问题
+    function report() {
+
+        var json = $('.pageView').data('result'),
+            videoID = json.video_id,
+            videoName = decodeURIComponent(json.video_title),
+            ifShow = '';
+
+        if ($('.more-select-con').size() > 0){
+
+            $('.more-select-con').remove();
+
+        }
+
+
+        $('.pageView').css('height', '100%');
+
+        $('body').css('height', '100%');
+
+        $('html').css('height', '100%');
+
+        // $('body').append(tpl);
+
+        $('html').scrollTop(0);
+
+
+        var tpl = ['<div class="report-con">',
+                        '<p><label><input class="video-report" name="video-report" data-type="error_play" type="radio" >无法播放</label></p>',
+                        '<p style="' + ifShow + '"><label><input class="video-report" name="video-report" data-type="error_update" type="radio" >剧集更新慢</label></p>',
+                        '<p><label><input class="video-report" name="video-report" data-type="error_cache" type="radio" >无法缓存</label></p>',
+                        '<p><label><input class="video-report" name="video-report" data-type="error_info" type="radio" >影片信息有误</label></p>',
+                        '<p><label><input class="video-report" name="video-report" data-type="error_celebrity" type="radio" >艺人信息有误</label></p>',
+                        '<p><label><input class="video-report" name="video-report" data-type="add" type="radio" >催促小编添加片源</label></p>',
+                    '</div>'].join('');
+
+        sweetAlert({
+            title: '',
+            text: tpl,
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            closeOnConfirm: false,
+            closeOnCancel: true,
+            html: true
+            // imageUrl: appConfig.staticPath+'/images/banner/'+targetItem.scheme+'-icon.png'
+        },
+        function(isConfirm) {
+
+            if (isConfirm) {
+
+                if ($('.report-con input:checked').size()){
+
+                    var reportType = $('.report-con input:checked').data('type'),
+                        reportWords = $.trim($('.report-con textarea').val()),
+                        gaReport = '';
+
+                    if (reportType == 'other' && reportWords.length > 0){
+
+                        gaReport = reportType + '_' + reportWords;
+                        
+
+                    }else if (reportType != 'other'){
+
+                        gaReport = reportType;
+
+                    }else{
+
+                        return;
+
+                    }
+
+                    console.log(gaReport);
+
+                    ga('send', 'event', 'Video Detail', 'report', videoName + '_' + videoID + '_' + gaReport);
+
+                    sweetAlert({
+                        title: "提交成功",
+                        // text: "Something went wrong!",
+                        timer: 1000,
+                        type: "success",
+                        showConfirmButton: false
+                    });
+
+                }
+
+            }
+            else {
+
+                // sweetAlert("Oops...", "Something went wrong!", "error");
+
+            }
+
+            $('.pageView').css('height', 'auto');
+
+            $('body').css('height', 'auto');
+
+            $('html').css('height', 'auto');
+        });
+
+    }
+
+
+    // 获取所在大类
+    function getCategory (cates) {
+
+        var category = 'unknown';
+
+        if (cates && cates.length) {
+
+            category = cates[0]['alias'] ? cates[0]['alias'].split('/')[1] : 'tv';
+        }
+
+        return category;
+    }
+
+
+    function getDuration (seconds) {
+
+        var result = '';
+
+        if (seconds > 0) {
+
+            var hour = Math.floor(seconds/3600),
+                minite = Math.floor((seconds - hour*3600)/60),
+                second = seconds % 60;
+
+            var hour_s = hour>0 ? hour+':' : '',
+                minite_s = minite>9 ? minite+':' : '0'+minite+':',
+                second_s = second>9 ? second+'' : '0'+second;
+
+            result = hour_s+minite_s+second_s;
+        }
+
+        return result;
+    }
+
+
+    function getRangedList (mediaList) {
+
+        var lists = {},
+            ranges = [];
+
+        var targetRange;
+
+        var episodeStart = 1;
+        var index = 0;
+
+        var firstMedia = mediaList[0];
+
+        if (firstMedia.tv && firstMedia.tv.episode) {
+
+            episodeStart = parseInt(mediaList[0].tv.episode);
+        };
+
+
+        var rangeCount = 100,
+            rangeIndex = Math.floor(episodeStart/rangeCount);
+            
+
+        while (mediaList[index]) {
+
+            // console.log('range index: %s  episode start: %s', rangeIndex, episodeStart)
+
+            // 700
+            var episodeEnd = (rangeIndex+1) * rangeCount;
+
+            // console.log('episode start: %s  end: %s', episodeStart, episodeEnd)
+            
+            // 700 - 652 + 1 = 49
+            // 当前区间有多少个剧集
+            var count = episodeEnd - episodeStart + 1;
+            var endIndex = index + count;
+
+            // console.log('start index: %s  end index: %s  count: %s', index, endIndex, count)
+
+            var list = mediaList.slice(index, endIndex);
+
+            // 取截取的区间列表最后一条的剧集
+            var lastEpisode = list[list.length-1];
+
+            if (lastEpisode && lastEpisode.tv && lastEpisode.tv.episode) {
+                episodeEnd  = parseInt(list[list.length-1].tv.episode)
+            };
+
+
+            var range = episodeStart.toString() + '-' + episodeEnd.toString();
+
+            ranges.push(range);
+
+
+            // 获取初始显示的区间
+            var currentIndex = VideoInfo.targetEpisodeIndex;
+
+            // console.log('currentIndex: %s', currentIndex)
+
+            if (currentIndex && currentIndex>=episodeStart && currentIndex<=episodeEnd) {
+
+                targetRange = range;
+            };
+
+
+            lists[range] = list;
+
+            // 更新各种位置索引
+            episodeStart = episodeEnd + 1;
+            index = endIndex;
+
+            rangeIndex += 1;
+        }
+
+
+        return {
+            ranges: ranges.reverse(),
+            lists: lists,
+            targetRange: targetRange
+        };
+    }
+
+
+    // 切换视频源
+    function reloadData(button, first) {
+
+        var $button = $(button);
+
+        var target = $button.data('name');
+
+        if (target == VideoInfo.selectedSite) return;
+
+        $button.addClass('selected').siblings('a').removeClass('selected');
+
+        VideoInfo.selectedSite = target;
+
+        var sourceList = VideoInfo.mediaInfo.list;
+
+        var mediaList = sourceList[target];
+
+
+        if (mediaList && mediaList.length) {
+
+            var mediaDefault = VideoInfo.isDesc ? mediaList[mediaList.length-1] : mediaList[0];
+            // var mediaDefault = mediaList[0];
+
+            //判断是否为sohu
+            if (target == 'sohu'){
+
+                $('.download-guide').show().css('opacity', '0.7');
+
+            }else{
+
+                $('.download-guide').hide();
+
+            }
+
+            // 如果有之前选中过剧集
+            if (VideoInfo.targetEpisodeIndex) {
+
+                var targetMedia = null;
+
+                for (var i=0; i<mediaList.length; i++) {
+
+                    var media = mediaList[i];
+
+                    if (media.tv && media.tv.episode==VideoInfo.targetEpisodeIndex) {
+                        targetMedia = media;
+
+                        break;
+                    }
+                };
+
+                if (targetMedia) mediaDefault = targetMedia;
+            }
+
+
+
+            VideoInfo.targetEpisodeIndex = mediaDefault.tv && mediaDefault.tv.episode ? mediaDefault.tv.episode : 1;
+
+
+            var params = getMediaParams(mediaDefault);
+
+
+            var $playButton = $('.detail-item').find('.play');
+
+            var playUrl = appConfig.appScheme + 'play?h=' + params;
+            // 如果需要跳转到其它应用中播放
+            // playUrl = supportedApps.formatPlayUrl(playUrl, $playButton);
+
+            var downloadUrl = appConfig.appScheme + 'download?h=' + params;
+
+            $playButton.attr('href', playUrl);
+
+            $playButton.data('vname', mediaDefault.tv ? mediaDefault.tv.name : decodeURIComponent(VideoInfo.name));
+            $playButton.data('sname', mediaDefault.site_name);
+            $playButton.data('hash', mediaDefault.hash);
+            $playButton.data('eindex', VideoInfo.targetEpisodeIndex);
+
+
+            var $downloadButton = $('.detail-item').find('.download');
+
+
+            var downloadUrl = appConfig.appScheme + 'download?h=' + params;
+                var videoName = decodeURIComponent(VideoInfo.name),
+                    siteName = VideoInfo.selectedSite,
+                    sourceList = VideoInfo.mediaInfo.list,
+                    mediaList = sourceList[siteName],
+                    videoHash = mediaList[0].hash,
+                    episodeIndex = 0,
+                    gaPlayArry = [];
+                $downloadButton.text('缓存').attr('href', downloadUrl);
+
+                $downloadButton.off(appConfig.clickEvent);
+                $downloadButton.on(appConfig.clickEvent, function() {
+                    // ga('send', 'event', 'Video', 'Download', gaPlayArry.join('_'), {'nonInteraction':1});
+                    ga('send', 'event', 'Video Detail', 'download', videoName + '_' + VideoInfo.videoID + '_' + episodeIndex, {'nonInteraction': 1});
+
+                    ga('send', 'event', 'Video Site Name', 'download', videoName + '_' + VideoInfo.videoID + '_' + siteName + '_' + videoHash, {'nonInteraction': 1});
+                });
+
+            // 视频源切换提示(第一次不显示)
+            if (!first) {
+
+                showViewedProcess();
+
+                jsToOC.send('notification?text=视频源已切换&success=1');
+
+            }else{
+
+                pageInfo.viewDidReShow();  
+
+                // getNativeAd();              
+
+            }
+            
+        }
+
+        else {
+            console.warn('has no medias for %s !', target);
+            ga('send', 'event', 'Video Site Empty', 'error', decodeURIComponent(VideoInfo.name) + '_' + VideoInfo.videoID + '_' + VideoInfo.selectedSite, {'nonInteraction':1});
+        }
+    }
+
+
+    //发送ga请求
+    function sendGaPlay(item){
+        var thiz = item,
+            videoName = decodeURIComponent(VideoInfo.name),
+            siteName = thiz.data('sname'),
+            videoHash = thiz.data('hash'),
+            episodeIndex = thiz.data('eindex'),
+            gaPlayArry = [];
+
+        if (VideoInfo.mediaInfo.type == 'movie'){
+            episodeIndex = 0;
+        }
+
+        // ga('send', 'event', 'Video', 'Play', gaPlayArry.join('_'), {'nonInteraction':1});
+        ga('send', 'event', 'Video Detail', 'play', videoName + '_' + VideoInfo.videoID + '_' + episodeIndex, {'nonInteraction':1});
+
+        ga('send', 'event', 'Video Site Name', 'play', videoName + '_' + VideoInfo.videoID + '_' + siteName + '_' + videoHash, {'nonInteraction':1});
+    }
+
+    //错误提示
+    function errorNotice () {
+
+        console.log('error');
+
+        var errorTpl = ['<div class="error-notice">',
+                            '<p>非常抱歉，此视频已失效</p>',
+                            '<p>如果您已经订阅此视频</p>',
+                            '<a class="unfollow" href="javascript:;">取消订阅</a>',
+                            '<p>如果此视频存在于观看记录列表，请手动删除</p>',
+                        '</div>'];
+
+        $card.html(errorTpl.join(''));
+
+        // 取消订阅
+        $card.on(appConfig.clickEvent, 'a.unfollow', function () {
+
+            var didSubString = 'unsubscribe?';
+                
+                didSubString += 'id=' + pageId;
+
+            jsToOC.send(didSubString);
+
+            console.log(didSubString);
+
+        });
+
+    }
+
+    //  同步加载视频信息
+    function addView (options) {
+
+
+        // 查看视频详情
+        $card.on(appConfig.clickEvent, '.video-item', function () {
+         
+            var url,
+                gaType;
+
+            if (appConfig.isLocal) {
+                url = 'http://10.88.0.111/tonight/server-v3/static/client/src/html/detail.html'
+            }
+            else {
+                url = appConfig.webDomain + '/video/detail';
+            }
+
+            var data = $(this).data();
+
+            localStore.set(data);
+
+            OpenPage({
+
+                url: url + '?video_id=' + data.videoId + '&video_name=' + data.name,
+
+                // title: video-name
+                t:  data['name'],
+                
+                // 隐藏TabBar
+                tbh: true,
+
+                // 下拉刷新
+                pdr: false,
+
+                pcf: true,
+
+                rb: {
+                    t: '1',
+                    v: 'share'
+                }
+
+                // 展示banner
+                ,ban: {
+                    i: 2,
+                    p: 2
+                }
+
+                // 页面加载完不会自动隐藏菊花
+                // ahl: false
+            });
+
+            if (data.type == 'series'){
+
+                gaType = 'Series';
+
+            }
+            else if (data.type == 'recommend'){
+
+                gaType = 'Recommand';
+
+            }
+
+            ga('send', 'event', 'Video ' + gaType + ' To Video Detail', 'click', data.name + '_' + data.videoId, {'nonInteraction':1});
+
+        }); 
+
+        var json = $('.pageView').data('result');
+
+        console.log(json.status);
+
+        if (video_can_download == false){
+
+            $('.actions .download').hide();
+            
+            $('.actions .play').css({'display': 'block','width': '22%'});
+
+        }
+
+        // 切换按钮
+        var $buttons = $card.find('.detail-cards .button');
+        $buttons.on(appConfig.clickEvent, cardSwitch);
+
+    } 
+
+    function cardSwitch () {
+
+        var $button = $(this);
+
+        if ($button.hasClass('current')) return;
+
+        var $card = $('#card-' + $button.data('target'));
+
+        // 如果button是隐藏的，不显示arrow
+        if ($button.is(':visible')) {
+
+            var offset = $button.offset(),
+                buttonLeft = offset.left,
+                buttonWidth = offset.width;
+
+            $button.addClass('current').siblings().removeClass('current');
+
+            $card.show().siblings('.card').hide();
+
+        }
+
+        else {
+            $card.show().siblings('.card').hide();
+        }
+
+        if ($button.data('target') == 'related' && $('#card-related').find('.video-item').length == 0 && $('#card-related').find('.message').length == 0 && $('.loader').length == 0){
+            recommends(recoType, recoId);
+        }
+    }
+
+    //相关推荐
+    function recommends(dType, vId){
+
+        if ($('.loader').length == 0){
+
+            $('#card-related').append(loading.init());
+
+        } 
+        
+        var getCount = 10;
+
+        if (dType == 'iPad' || dType == 'unknown'){
+            getCount = 16;
+        }
+
+        $.ajax({
+            url: appConfig.apiDomain + '/videos/recommendation' + appConfig.ajaxCallback,
+            data: {
+                video_id: vId,
+                count: getCount
+            },
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (data.status && data.videos){
+                    var data = data.videos;
+                    if (data.length > 0){
+                        $card.find('#card-related').append(renderRecommend(data));
+                    }else {
+                        $card.find('#card-related').append('<div class="message" style="text-align: center;">暂无相关视频</div>');
+                    }
+                }else{
+                    $card.find('#card-related').append('<div class="message" style="text-align: center;">暂无相关视频</div>');
+                }
+
+                if ($('.loader').length > 0){
+
+                    loading.hide();
+
+                }
+
+            },
+
+            error: function() {
+                alert('error');
+                console.log("recommend error");
+
+                if ($('.loader').length > 0){
+
+                    loading.hide();
+                    
+                }
+
+                $card.find('#card-related').append('<div class="message" style="text-align: center;">暂无相关视频</div>');
+
+            }
+        });
+    }
+
+    //追剧
+    function videoFollow(){
+
+        if (debugMode) {
+
+            pageInfo.subscribed = 0;    
+
+        }
+
+        isSubcribed = pageInfo.subscribed ? pageInfo.subscribed : '0';
+
+        console.log('pageInfo=' + JSON.stringify(pageInfo));
+
+        console.log('isSubcribed=' + isSubcribed);
+        
+        if (isSubcribed == 0){
+
+            $('.follow').removeClass('hasfollow');
+
+        }
+        else if (isSubcribed == 1){
+
+            $('.follow').addClass('hasfollow');
+
+        }
+
+        $card.on(appConfig.clickEvent, '.follow', function(){
+            
+            if (isSubcribed == 0){
+                var didSubString = 'subscribe?';
+
+                didSubString += 'id=' + VideoInfo.videoID + '&name=' + VideoInfo.name + '&cover=' + VideoInfo.cover;
+                didSubString += '&multi=' + VideoInfo.multiple + '&rating=' + VideoInfo.rating + '&duration=' + VideoInfo.duration;
+                didSubString += '&date=' + VideoInfo.date + '&total=' + VideoInfo.total + '&current=' + VideoInfo.targetEpisodeIndex + '&site=' + VideoInfo.selectedSite;
+                didSubString += '&latest=' + VideoInfo.latest;
+            }else{
+                var didSubString = 'unsubscribe?';
+                
+                didSubString += 'id=' + VideoInfo.videoID;
+            }
+            
+            if (followLock == 0){
+                followLock = 1;
+                jsToOC.send(didSubString);
+               // window[appConfig.appUAPrefix].didUnsubscribeVideo(1);
+                
+            }
+
+            ga('send', 'event', 'Video Detail', 'follow', decodeURIComponent(VideoInfo.name) + '_' + VideoInfo.videoID, {'nonInteraction':1});
+
+        })
+
+        if (!isNaN(appVersion) && appVersion>=3.9){
+            
+            $('.follow').show();
+
+        }
+
+    }
+
+    pageInfo.didSubscribeVideo = function (num) {
+
+        subscribeBack(num);
+    }
+
+    pageInfo.didUnsubscribeVideo = function (num) {
+
+        //如果页面有错误
+        if ($('.error-notice').length > 0){
+
+            if (num == 1){
+
+                $('.unfollow').prev().text('取消订阅成功，请返回');
+
+                $('.unfollow').remove();
+
+            }
+
+        }
+        else{
+
+            unSubscribeBack(num);
+
+        }
+
+    }
+
+    //追剧回调
+    function subscribeBack(type){
+        
+        followLock = 0;
+        
+        if (type == 1){
+            pageInfo.subscribed = 1;
+            isSubcribed = pageInfo.subscribed;
+            $('.follow').addClass('hasfollow');
+        }else{
+            console.log('didSubscribeVideo failed');
+        }
+    }
+
+    //取消追剧回调
+    function unSubscribeBack(type){
+        
+        followLock = 0;
+        
+        if (type == 1){
+            pageInfo.subscribed = 0;
+            isSubcribed = pageInfo.subscribed;
+            $('.follow').removeClass('hasfollow');
+        }else{
+            console.log('didUnSubscribeVideo failed');
+        }
+    }
+
+    //检查追剧状态
+    function checkSubscribe() {
+        var checksubscribeString = 'checksubscribe?';
+
+        checksubscribeString += 'id=' + VideoInfo.videoID + '&name=' + VideoInfo.name + '&cover=' + VideoInfo.cover;
+        checksubscribeString += '&multi=' + VideoInfo.multiple + '&rating=' + VideoInfo.rating + '&duration=' + VideoInfo.duration;
+        checksubscribeString += '&date=' + VideoInfo.date + '&total=' + VideoInfo.total + '&current=' + VideoInfo.targetEpisodeIndex + '&site=' + VideoInfo.selectedSite;
+        checksubscribeString += '&latest=' + VideoInfo.latest;
+
+        jsToOC.send(checksubscribeString);
+
+        setTimeout(function() {
+
+            videoFollow();
+
+        }, 500)
+        
+    }
+
+    //计算星级
+    function tranStar(score){
+
+        var starClass = 35;
+        
+        if (score && score.length) {
+
+            // 6.7
+            score = parseFloat(score);
+
+            if (score != 0) {
+
+                // 四舍五入后包含0.5的数量(13)
+                starClass = Math.round(score/0.5);
+
+                // 如果是奇数: -1(12) 保证 0.25 数量是偶数
+                if (starClass%2 == 1) starClass -= 1;
+
+                // 10分制转换成5分制 *10 消除小数点
+                starClass = 'star-' + starClass/4 * 10;
+            }
+        }
+
+        return starClass;
+        
+    }
+
+    $(function() {
+
+        var videoID = getUrlParam('video_id'),
+            videoName = getUrlParam('video_name'),
+            options = {},
+            cookieDevice = $.cookie('xy_d_model');
+        
+        recoId = videoID;
+        options.preData = localStore.get(videoID);
+
+        options.deviceType = 'iPhone';
+        recoType = 'iPhone';
+
+        if (cookieDevice && cookieDevice.indexOf('iPad') >= 0){
+            options.deviceType = 'iPad';
+            recoType = 'iPad';
+        }
+
+        options.videoID = videoID;
+
+        options.videoName = videoName;
+
+        jsToOC.send('checkviewed?vid=' + videoID);
+
+        setTimeout(function(){
+
+            addView(options);
+
+        }, 500);
+
+        moreAction();
+
+        $(document).on('touchmove', function(){
+            $('.pageView').addClass('touch-invisible');
+            
+        });
+
+        $(document).on('touchend', function(){
+            $('.pageView').removeClass('touch-invisible');
+            
+        });
+
+    });
+
+
+});

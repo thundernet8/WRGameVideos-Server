@@ -14,7 +14,6 @@ def request_api_url(url, private=False):
         token = session.get('user_access_token') or current_user.access_token
     else:
         token = session.get('access_token') or Option.get_option('access_token')
-    print token
     headers = {
         'X-Requested-With': 'XMLHttpRequest',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) '

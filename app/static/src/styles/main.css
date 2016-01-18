@@ -473,7 +473,7 @@ a {
 	.list_item .detail {
 		padding-right: 30px;
 		width: 16px;
-		background-image: url('../imagesg/toDetail.png');
+		background-image: url('../images/toDetail.png');
 		background-repeat: no-repeat;
 		background-size: 16px auto;
 		background-position: left center
@@ -486,7 +486,7 @@ a {
 
 @media screen and (min-width:768px) and all and (-webkit-min-device-pixel-ratio:1.5) {
 	.list_item .detail {
-		background-image: url('../imagesg/toDetail@1.5x.png')
+		background-image: url('../images/toDetail@1.5x.png')
 	}
 }
 
@@ -896,7 +896,7 @@ a {
 	display: block;
 	float: left;
 	text-align: center;
-	width: 84px;
+	width: 100px;
 	padding-left: 10px;
 	font-size: .9em;
 	position: relative
@@ -904,8 +904,8 @@ a {
 
 .video-list-home .video-item img {
 	display: block;
-	width: 84px;
-	height: 112px;
+	width: 100px;
+	height: 100px;
 	margin: 0 auto;
 	background-image: url('../images/placeholder.png?v=5');
 	background-size: cover;
@@ -919,17 +919,24 @@ a {
 	color: #fff;
 	text-align: left;
 	max-height: 3.6em;
-	overflow: hidden
+	overflow: hidden;
+	box-sizing: content-box;
+    line-height: 1.2em;
 }
 
 .video-list-home .video-item .info {
 	margin: 5px 0 0;
 	font-size: .78em;
 	color: rgba(255,255,255,0.6);
-	text-align: left
+	text-align: left;
+    line-height: 1.22em;
+    max-height: 2.4em;
+    box-sizing: content-box;
+    overflow: hidden;
 }
 
 .video-list-home .video-item .score {
+    display: none;
 	top: 91px;
 	color: #fff;
 	font-size: .8em;
@@ -939,7 +946,7 @@ a {
 	position: absolute;
 	text-align: left;
 	width: 84px;
-	box-sizing: border-box;
+	box-sizing: content-box;
 	height: 21px;
 	background: -moz-linear-gradient(top,rgba(0,0,0,0),rgba(0,0,0,0.5));
 	background: -o-linear-gradient(top,rgba(0,0,0,0),rgba(0,0,0,0.5));
@@ -955,13 +962,14 @@ a {
 
 	.video-list-home .video-item img {
 		width: 100px;
-		height: 145px
+		height: 100px
 	}
 
 	.video-list-home .video-item .score {
-		top: 122px;
+		top: 77px;
 		height: 23px;
-		width: 100px
+		width: 100px;
+        box-sizing: content-box;
 	}
 }
 

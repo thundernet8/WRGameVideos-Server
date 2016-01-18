@@ -1,0 +1,20 @@
+{% macro render_subchannel(subchannel) %}
+<div class="cate-list" style="display:none;">
+    <div class="cate-head" data-target="0" data-filter="">
+        <a class="cate-title movie" href="javascript:void(0);">{{ subchannel.get('name') }}</a>
+    </div>
+    <div class="video-list-home">
+        <div class="scroller clearfix">
+            {% for video in subchannel.get('videos') %}
+            <a data-video-id="{{ video.get('video_id') }}" href="javascript:void(0);" class="video-item">
+                <div class="cover">
+                     <img class="lazy-pic" data-pic="{{ video.get('video_cover') }}" src="{{ url_for('static', filename='dist/images/holder.png') }}">
+                    <div class="info">{{ '%.1f' % (video.get('video_score', 0)/10) }}&nbsp分</div>
+                </div>
+                 <div class="title">{{ video.get('video_title') }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endmacro %}

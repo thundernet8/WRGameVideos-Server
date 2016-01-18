@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block header %}
+{{ super() }}
+{% block title %}<title>详情 - 高清影视</title>{% endblock %}
+{% block css %}<link href="{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/styles/page-detail.css') }}" rel="stylesheet" type="text/css"/>{% endblock %}
+{% endblock %}
+
+{% block body %}
+<div class="pageView videoData" data-result="">
+    <div class="detail-item">
+        <div class="thumb">
+            <img class="placeholder" src="{{ video.get('video_cover') }}">
+            <a class="report-link" href="javascript:;" style="display: none">报告问题</a>
+        </div>
+        <div class="content">
+            <h1 style="display:none">{{ video.get('video_title') }}</h1>
+            <p class="score-star  star-{{ star_num }}">{{ video.get('video_score')/10.0 }}</p>
+            <div class="siteListWrapper">
+                <div class="siteList" style="width: 115px;">
+                    <a href="javascript:void(0);" class="iqiyi selected" data-name="iqiyi"></a>
+                    <a href="javascript:void(0);" class="m1905" data-name="m1905"></a>
+                    <a href="javascript:void(0);" class="youku" data-name="youku"></a>
+                </div>
+            </div>
+            <div class="viewedInfo" style="height: 3px;"></div>
+            <div class="actions">
+                <a class="play" href="{{ 'wrgv-hd://play?h='+video.get('video_link_base64') if video.get('video_play_native', False) else video.video_link }}">播放</a>
+                <span class="gap"></span>
+                <a class="download" href="wrgv-hd://download?h={{ video.get('video_link_base64') }}">缓存</a>
+            </div>
+            <a class="follow" href="javascript:void(0);"></a>
+            <p class="download-guide" style="display: none;">如在线播放卡顿，可缓存后观看↑</p>
+        </div>
+        <div class="background" style="background-image:url({{ video.get('video_cover') }})"></div>
+    </div>
+    <div class="detail-cards">
+        <div class="buttons" style="visibility: visible;">
+            <div class="button current" data-target="summary">详情</div>
+            <div class="separator"></div>
+            <div class="button" data-target="related">推荐</div>
+        </div>
+        <div class="cards">
+            <div class="card" id="card-summary" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+                <div class="video-celebrity">
+                    <p class="video-celebrity-info clearfix">
+                        <span class="video-celebrity-title">标签:&nbsp;&nbsp;</span>
+                        <span class="video-celebrity-words">
+                            <a href="javascript:;" class="filter-btns" data-target="tag:爱情">爱情</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:青春">青春</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:电影">电影</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:中国">中国</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:2013">2013</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:中国电影">中国电影</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:张孝全">张孝全</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:黄真真">黄真真</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:范玮琪">范玮琪</a>&nbsp;/&nbsp;
+                            <a href="javascript:;" class="filter-btns" data-target="tag:白百何">白百何</a>
+                        </span>
+                    </p>
+                    <p class="video-celebrity-info long-info clearfix">
+                        <span class="video-celebrity-title">收录日期:&nbsp;&nbsp;</span>
+                        <span class="video-celebrity-words">{{ video.get('video_format_date') }}</span></p>
+                    <p class="video-celebrity-info clearfix">
+                        <span class="video-celebrity-title">时长:&nbsp;&nbsp;</span>
+                        <span class="video-celebrity-words">{{ video.get('video_duration_str') }}</span>
+                    </p>
+                </div>
+                <div class="video-summary">
+                    {{ video.get('video_description') }}
+                </div>
+            </div>
+            <div class="card" id="card-select" style="display: none;"></div>
+            <div class="card" id="card-comments" style="display: none;">评论</div>
+            <div class="card recommend-video" id="card-related" style="display: none;"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var video_can_download = {{ 1 if video.video_can_download else 0 }};
+    var video_play_native = {{ 1 if video.video_play_native else 0}};
+</script>
+<script type="text/javascript">
+    d = new Date();
+    v = (d.getYear()-100).toString()+ (d.getMonth()+101).toString().substr(1,2)+ d.getDate().toString();
+    seajs.config({
+        base: "{{ url_for('static', filename=current_app.config['STATIC_DIR_PREFIX']+'/scripts', _external=True) }}",
+        map: [
+            [ /^(.*\.js)(.*)$/i, '$1?v='+v]
+        ]
+    });
+    seajs.use('pages/detail');
+</script>
+<script>
+    var hostname = location.hostname,
+        isLocal = hostname=='10.88.0.111' || hostname == '10.88.0.110',
+        isDev = hostname.indexOf('dev')!==-1,
+        uID = getCookie('xy_d_id');
+
+    //获取cookie
+    function getCookie(name){
+
+        var strCookie=document.cookie;
+
+        var arrCookie=strCookie.split("; ");
+
+        for(var i=0;i<arrCookie.length;i++){
+
+            var arr=arrCookie[i].split("=");
+
+            if(arr[0]==name)return arr[1];
+
+        }
+
+        return "";
+    }
+
+    (function(i,s,o,g,r,a,m){
+        i['GoogleAnalyticsObject']=r;
+        i[r]=i[r]||function(){
+            if (!isLocal && !isDev){
+                (i[r].q=i[r].q||[]).push(arguments);
+            }else{
+
+            }
+        },
+        i[r].l=1*new Date();
+        a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];
+        a.async=1;
+        a.src=g;
+        m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-00000000-1', { 'userId': uID });
+
+</script>
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

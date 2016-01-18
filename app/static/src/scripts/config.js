@@ -1,14 +1,14 @@
 define(function() {
 
     var hostname = location.hostname,
-        isLocal = hostname=='192.241.233.185' || hostname=='127.0.0.1' || hostname == 'dev.parser.cc',
+        isLocal = hostname=='192.168.2.104' || hostname=='127.0.0.1' || hostname == 'dev.parser.cc',
         isDev = hostname.indexOf('dev')!==-1,
         $win = $(window);
 
     return {
         isLocal: isLocal,
         ajaxCallback: isLocal ? '?callback=?' : ''
-        , apiDomain: (isLocal || isDev) ? 'http://api.parser.cc/api/v1.0' : 'http://api.parser.cc/api/v1.0'
+        , apiDomain: (isLocal || isDev) ? 'http://127.0.0.1:5000/api/v1.0' : 'http://api.parser.cc/api/v1.0'
         , webDomain: (isLocal || isDev) ? 'http://127.0.0.1:5000/client/v1.0' : 'http://client.parser.cc/client/v1.0'
         , screenWidth: $win.width()
         , screenHeight : $win.height()

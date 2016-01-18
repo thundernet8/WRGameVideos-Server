@@ -3,6 +3,6 @@
     <img class="lazy-pic" data-pic="{{ video.get('video_cover') }}" src="{{ url_for('static', filename='dist/images/holder.png') }}">
     <div class="title">{{ video.get('video_title') }}</div>
     <div class="info">{{ video.get('video_description') }}</div>
-    <div class="score">{{ '%.1f' % video.get('video_score', 0) }}&nbsp分</div>
+    <div class="score">{{ '%.1f' % (video.get('video_score', 0)/10) }}&nbsp分</div>
 </a>
 {% endmacro %}

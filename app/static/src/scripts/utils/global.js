@@ -50,5 +50,4 @@ define(function(require, exports){
 
     return window[appConfig.appUAPrefix]
 
-
 });

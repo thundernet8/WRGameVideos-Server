@@ -23,8 +23,8 @@ class Config:
     WRGV_COMMENTS_PER_PAGE = 30
     WRGV_SLOW_DB_QUERY_TIME = 0.5
 
-    API_SERVER_OPEN_URL = 'http://api.parser.cc/open/v1.0/'
-    API_SERVER_API_URL = 'http://api.parser.cc/api/v1.0/'
+    API_SERVER_OPEN_URL = 'http://127.0.0.1:5000/open/v1.0/' or 'http://api.parser.cc/open/v1.0/'
+    API_SERVER_API_URL = 'http://127.0.0.1:5000/api/v1.0/' or 'http://api.parser.cc/api/v1.0/'
 
     STATIC_DIR_PREFIX = 'dist'
 
